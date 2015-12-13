@@ -81,6 +81,13 @@
         </configuration>
       </plugin>
       <plugin>
+        <!-- Fix broken release plugin in older Jenkins builds -->
+        <!-- https://groups.google.com/d/msg/jenkinsci-dev/NVLHCFegfYw/9Q1ugTc3CgAJ -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.1</version>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
