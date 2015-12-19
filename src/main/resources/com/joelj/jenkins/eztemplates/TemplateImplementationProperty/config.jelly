@@ -31,7 +31,7 @@
 				<f:checkbox />
 			</f:entry>
 			<f:entry field="syncScm" title="${%Sync Source Control Mgmt}">
-				<f:checkbox />
+				<f:checkbox default="true" />
 			</f:entry>
 			<f:entry field="syncOwnership" title="${%Sync Ownership}">
 				<f:checkbox />
