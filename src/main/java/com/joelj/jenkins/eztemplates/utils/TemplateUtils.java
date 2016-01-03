@@ -32,8 +32,7 @@ public class TemplateUtils {
     public static void handleTemplateSaved(AbstractProject templateProject, TemplateProperty property) throws IOException {
         LOG.info(String.format("Template [%s] was saved. Syncing implementations.", templateProject.getFullDisplayName()));
         for (AbstractProject impl : property.getImplementations()) {
-            TemplateImplementationProperty implProperty = (TemplateImplementationProperty) impl.getProperty(TemplateImplementationProperty.class);
-            handleTemplateImplementationSaved(impl, implProperty);
+            handleTemplateImplementationSaved(impl, getTemplateImplementationProperty(impl));
         }
     }
 
@@ -41,7 +40,6 @@ public class TemplateUtils {
         LOG.info(String.format("Template [%s] was deleted.", templateProject.getFullDisplayName()));
         for (AbstractProject impl : property.getImplementations()) {
             LOG.info(String.format("Removing template from [%s].", impl.getFullDisplayName()));
-            TemplateImplementationProperty implProperty = (TemplateImplementationProperty) impl.getProperty(TemplateImplementationProperty.class);
             impl.removeProperty(TemplateImplementationProperty.class);
             ProjectUtils.silentSave(impl);
         }
@@ -51,7 +49,7 @@ public class TemplateUtils {
         LOG.info(String.format("Template [%s] was renamed. Updating implementations.", templateProject.getFullDisplayName()));
         for (AbstractProject impl : TemplateProperty.getImplementations(oldFullName)) {
             LOG.info(String.format("Updating template in [%s].", impl.getFullDisplayName()));
-            TemplateImplementationProperty implProperty = (TemplateImplementationProperty) impl.getProperty(TemplateImplementationProperty.class);
+            TemplateImplementationProperty implProperty = getTemplateImplementationProperty(impl);
             if (oldFullName.equals(implProperty.getTemplateJobName())) {
                 implProperty.setTemplateJobName(newFullName);
                 ProjectUtils.silentSave(impl);
@@ -88,7 +86,6 @@ public class TemplateUtils {
         
         AbstractProject templateProject = property.findTemplate();        
         if (templateProject == null) {
-        	
         	// If the template can't be found, then it's probably a bug
             throw new IllegalStateException(String.format("Cannot find template [%s] used by job [%s]", property.getTemplateJobName(), implementationProject.getFullDisplayName()));
         }
@@ -159,7 +156,7 @@ public class TemplateUtils {
 
         if (Jenkins.getInstance().getPlugin("promoted-builds") != null) {
             PromotedBuildsTemplateUtils.addPromotions(implementationProject, templateProject);
-        } 
+        }
 
         ProjectUtils.silentSave(implementationProject);
     }
@@ -280,4 +277,25 @@ public class TemplateUtils {
         }
     }
 
+    /**
+     * @param item A changed project
+     * @return null if this is not a template implementation project
+     */
+    public static TemplateImplementationProperty getTemplateImplementationProperty(Item item) {
+        if (item instanceof AbstractProject) {
+            return (TemplateImplementationProperty) ((AbstractProject) item).getProperty(TemplateImplementationProperty.class);
+        }
+        return null;
+    }
+
+    /**
+     * @param item A changed project
+     * @return null if this is not a template project
+     */
+    public static TemplateProperty getTemplateProperty(Item item) {
+        if (item instanceof AbstractProject) {
+            return (TemplateProperty) ((AbstractProject) item).getProperty(TemplateProperty.class);
+        }
+        return null;
+    }
 }

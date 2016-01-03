@@ -6,7 +6,6 @@ import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
-import org.apache.tools.ant.util.StringUtils;
 
 /**
  * React to changes being made on template projects
@@ -16,7 +15,7 @@ public class TemplateProjectListener extends ItemListener {
 
     @Override
     public void onUpdated(Item item) {
-        TemplateProperty property = getTemplateProperty(item);
+        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
                 TemplateUtils.handleTemplateSaved((AbstractProject) item, property);
@@ -28,7 +27,7 @@ public class TemplateProjectListener extends ItemListener {
 
     @Override
     public void onDeleted(Item item) {
-        TemplateProperty property = getTemplateProperty(item);
+        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
                 TemplateUtils.handleTemplateDeleted((AbstractProject) item, property);
@@ -40,7 +39,7 @@ public class TemplateProjectListener extends ItemListener {
 
     @Override
     public void onLocationChanged(Item item, String oldFullName, String newFullName) {
-        TemplateProperty property = getTemplateProperty(item);
+        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
                 TemplateUtils.handleTemplateRename((AbstractProject) item, property, oldFullName, newFullName);
@@ -52,7 +51,7 @@ public class TemplateProjectListener extends ItemListener {
 
     @Override
     public void onCopied(Item src, Item item) {
-        TemplateProperty property = getTemplateProperty(item);
+        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
                 TemplateUtils.handleTemplateCopied((AbstractProject) item, (AbstractProject) src);
@@ -60,17 +59,6 @@ public class TemplateProjectListener extends ItemListener {
                 throw Throwables.propagate(e);
             }
         }
-    }
-
-    /**
-     * @param item A changed project
-     * @return null if this is not a template project
-     */
-    private static TemplateProperty getTemplateProperty(Item item) {
-        if (item instanceof AbstractProject) {
-            return (TemplateProperty) ((AbstractProject) item).getProperty(TemplateProperty.class);
-        }
-        return null;
     }
 
 }
