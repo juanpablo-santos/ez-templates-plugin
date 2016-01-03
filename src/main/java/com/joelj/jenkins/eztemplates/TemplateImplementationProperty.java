@@ -92,23 +92,8 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
     public static class DescriptorImpl extends JobPropertyDescriptor {
         @Override
         public JobProperty<?> newInstance(StaplerRequest request, JSONObject formData) throws FormException {
-            if (formData.size() > 0 && formData.has("useTemplate")) {
-                JSONObject useTemplate = formData.getJSONObject("useTemplate");
-
-                String templateJobName = useTemplate.getString("templateJobName");
-                boolean syncMatrixAxis = useTemplate.getBoolean("syncMatrixAxis");
-                boolean syncDescription = useTemplate.getBoolean("syncDescription");
-                boolean syncBuildTriggers = useTemplate.getBoolean("syncBuildTriggers");
-                boolean syncDisabled = useTemplate.getBoolean("syncDisabled");
-                boolean syncSecurity = useTemplate.getBoolean("syncSecurity");
-                boolean syncScm = useTemplate.getBoolean("syncScm");
-                boolean syncOwnership = useTemplate.getBoolean("syncOwnership");
-                boolean syncAssignedLabel = useTemplate.getBoolean("syncAssignedLabel");
-
-                return new TemplateImplementationProperty(templateJobName, syncMatrixAxis, syncDescription, syncBuildTriggers, syncDisabled, syncSecurity, syncScm, syncOwnership, syncAssignedLabel);
-            }
-
-            return null;
+            // TODO Replace with OptionalJobProperty 1.637
+            return formData.optBoolean("useTemplate")?request.bindJSON(TemplateImplementationProperty.class, formData):null;
         }
 
         /**

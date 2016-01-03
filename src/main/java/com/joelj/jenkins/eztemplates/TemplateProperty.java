@@ -23,7 +23,6 @@ public class TemplateProperty extends JobProperty<AbstractProject<?, ?>> {
                 return templateFullName.equals(prop.getTemplateJobName());
             }
         });
-
     }
 
     @DataBoundConstructor
@@ -38,10 +37,8 @@ public class TemplateProperty extends JobProperty<AbstractProject<?, ?>> {
     public static class DescriptorImpl extends JobPropertyDescriptor {
         @Override
         public JobProperty<?> newInstance(StaplerRequest request, JSONObject formData) throws FormException {
-            if (formData.size() > 0) {
-                return new TemplateProperty();
-            }
-            return null;
+            // TODO Replace with OptionalJobProperty 1.637
+            return formData.size() > 0?new TemplateProperty():null;
         }
 
         @Override
