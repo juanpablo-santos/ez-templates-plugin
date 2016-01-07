@@ -3,6 +3,7 @@ package com.joelj.jenkins.eztemplates.utils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import hudson.XmlFile;
+import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Items;
 import hudson.model.JobProperty;
@@ -10,6 +11,7 @@ import hudson.triggers.Trigger;
 import hudson.util.AtomicFileWriter;
 import hudson.util.IOException2;
 import jenkins.model.Jenkins;
+import jenkins.security.NotReallyRoleSensitiveCallable;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -73,11 +75,11 @@ public class ProjectUtils {
     }
 
     /**
-     * Copied from {@link AbstractProject#updateByXml(javax.xml.transform.Source)}, removing the save event and
+     * Copied from 1.580.3 {@link AbstractItem#updateByXml(javax.xml.transform.Source)}, removing the save event and
      * returning the project after the update.
      */
     @SuppressWarnings("unchecked")
-    public static AbstractProject updateProjectWithXmlSource(AbstractProject project, Source source) throws IOException {
+    public static AbstractProject updateProjectWithXmlSource(final AbstractProject project, Source source) throws IOException {
 
         XmlFile configXmlFile = project.getConfigFile();
         AtomicFileWriter out = new AtomicFileWriter(configXmlFile.getFile());
@@ -92,17 +94,27 @@ public class ProjectUtils {
                         new StreamResult(out));
                 out.close();
             } catch (TransformerException e) {
-                throw new IOException2("Failed to persist configuration.xml", e);
+                throw new IOException("Failed to persist config.xml", e);
             }
 
             // try to reflect the changes by reloading
-            new XmlFile(Items.XSTREAM, out.getTemporaryFile()).unmarshal(project);
-            project.onLoad(project.getParent(), project.getRootDir().getName());
+            Object o = new XmlFile(Items.XSTREAM, out.getTemporaryFile()).unmarshal(project);
+            if (o!=project) {
+                // ensure that we've got the same job type. extending this code to support updating
+                // to different job type requires destroying & creating a new job type
+                throw new IOException("Expecting "+project.getClass()+" but got "+o.getClass()+" instead");
+            }
+            Items.whileUpdatingByXml(new NotReallyRoleSensitiveCallable<Void,IOException>() {
+                @Override public Void call() throws IOException {
+                    project.onLoad(project.getParent(), project.getRootDir().getName());
+                    return null;
+                }
+            });
             Jenkins.getInstance().rebuildDependencyGraph();
 
             // if everything went well, commit this new version
             out.commit();
-            return ProjectUtils.findProject(project.getFullName());
+            return findProject(project.getFullName());
         } finally {
             out.abort(); // don't leave anything behind
         }
