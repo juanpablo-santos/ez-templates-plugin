@@ -1,4 +1,4 @@
-[![Build Status](https://buildhive.cloudbees.com/job/JoelJ/job/ez-templates/badge/icon)](https://buildhive.cloudbees.com/job/JoelJ/job/ez-templates/)
+[![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/ez-templates-plugin)](https://jenkins.ci.cloudbees.com/job/plugins/ez-templates-plugin)
 
 Allows you to use any job as a template for another job with overridable parameters.
 
