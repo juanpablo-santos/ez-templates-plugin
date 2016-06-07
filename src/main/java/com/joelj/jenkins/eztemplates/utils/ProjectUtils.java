@@ -9,7 +9,6 @@ import hudson.model.Items;
 import hudson.model.JobProperty;
 import hudson.triggers.Trigger;
 import hudson.util.AtomicFileWriter;
-import hudson.util.IOException2;
 import jenkins.model.Jenkins;
 import jenkins.security.NotReallyRoleSensitiveCallable;
 import org.kohsuke.stapler.Ancestor;
