@@ -1,9 +1,8 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
 import com.google.common.base.Throwables;
-import com.joelj.jenkins.eztemplates.utils.ReflectionUtils;
+import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractProject;
-import org.apache.commons.lang.ClassUtils;
 
 import java.lang.reflect.Method;
 
@@ -25,7 +24,7 @@ public class MatrixAxisExclusion extends HardCodedExclusion {
     @Override
     public void preClone(AbstractProject implementationProject) {
         if (isMatrixProject(implementationProject)) {
-            axes = ReflectionUtils.getFieldValue(implementationProject.getClass(), implementationProject, "axes");
+            axes = EzReflectionUtils.getFieldValue(implementationProject.getClass(), implementationProject, "axes");
         }
     }
 
@@ -46,7 +45,7 @@ public class MatrixAxisExclusion extends HardCodedExclusion {
         if (axisList == null) {
             return; //The "axes" field can never be null. So just to be extra careful.
         }
-        ReflectionUtils.setFieldValue(matrixProject.getClass(), matrixProject, "axes", axisList);
+        EzReflectionUtils.setFieldValue(matrixProject.getClass(), matrixProject, "axes", axisList);
 
         Class<?> clazz=null;
         try {

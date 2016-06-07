@@ -1,6 +1,6 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
-import com.joelj.jenkins.eztemplates.utils.ReflectionUtils;
+import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractProject;
 
 public class DisabledExclusion extends HardCodedExclusion {
@@ -23,7 +23,7 @@ public class DisabledExclusion extends HardCodedExclusion {
 
     @Override
     public void postClone(AbstractProject implementationProject) {
-        ReflectionUtils.setFieldValue(AbstractProject.class, implementationProject, "disabled", disabled);
+        EzReflectionUtils.setFieldValue(AbstractProject.class, implementationProject, "disabled", disabled);
     }
 
 }

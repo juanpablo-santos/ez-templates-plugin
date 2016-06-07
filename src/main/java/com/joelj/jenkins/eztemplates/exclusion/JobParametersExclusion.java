@@ -1,7 +1,7 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
 import com.google.common.base.Throwables;
-import com.joelj.jenkins.eztemplates.utils.ReflectionUtils;
+import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
@@ -80,7 +80,7 @@ public class JobParametersExclusion extends HardCodedExclusion {
                     found = true;
                     iterator.remove(); //Make the next iteration a little faster.
                     // #17 Description on parameters should always be overridden by template
-                    ReflectionUtils.setFieldValue(ParameterDefinition.class, oldImplementationParameter, "description", newImplementationParameter.getDescription());
+                    EzReflectionUtils.setFieldValue(ParameterDefinition.class, oldImplementationParameter, "description", newImplementationParameter.getDescription());
                     result.add(oldImplementationParameter);
                 }
             }

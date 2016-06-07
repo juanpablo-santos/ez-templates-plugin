@@ -3,7 +3,7 @@ package com.joelj.jenkins.eztemplates.exclusion;
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.TemplateImplementationProperty;
 import com.joelj.jenkins.eztemplates.TemplateProperty;
-import com.joelj.jenkins.eztemplates.utils.ReflectionUtils;
+import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.JobProperty;
@@ -43,7 +43,7 @@ public class EzTemplatesExclusion extends HardCodedExclusion {
 
     private void fixProperties(AbstractProject implementationProject) throws IOException {
 
-        ReflectionUtils.setFieldValue(AbstractItem.class, implementationProject, "displayName", displayName);
+        EzReflectionUtils.setFieldValue(AbstractItem.class, implementationProject, "displayName", displayName);
 
         implementationProject.removeProperty(templateImplementationProperty.getClass()); // If parent template is also an imple of a grand-parent
         implementationProject.addProperty(templateImplementationProperty);
