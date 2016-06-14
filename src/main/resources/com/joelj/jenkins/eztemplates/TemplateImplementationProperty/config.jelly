@@ -1,44 +1,43 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-	<f:optionalBlock name="useTemplate" title="${%Use another job as a template}" checked="${instance != null}" inline="true">
+  <f:optionalBlock name="useTemplate" title="${%Use another job as a template}" checked="${instance != null}"
+                   inline="true">
 
-		<f:entry field="templateJobName" title="${%Name of template}">
-			<f:select />
-			<f:description>
-				<j:if test="${instance.templateJobName != null}">
-					<j:set var="template" value="${instance.findTemplate()}" />				
-					<j:if test="${template != null}">					
-						${%Currently based on}: <a href="${rootURL}/${template.url}">${template.fullDisplayName}</a>								
-					</j:if>		
-				</j:if>		
-			</f:description>
-		</f:entry>
+    <f:entry field="templateJobName" title="${%Name of template}">
+      <f:select/>
+      <f:description>
+        <j:if test="${instance.templateJobName != null}">
+          <j:set var="template" value="${instance.findTemplate()}"/>
+          <j:if test="${template != null}">
+            ${%Currently based on}:
+            <a href="${rootURL}/${template.url}">${template.fullDisplayName}</a>
+          </j:if>
+        </j:if>
+      </f:description>
+    </f:entry>
 
-		<f:advanced>
-			<f:entry field="syncDescription" title="${%Sync Description}">
-				<f:checkbox />
-			</f:entry>
-			<f:entry field="syncBuildTriggers" title="${%Sync Build Triggers}">
-				<f:checkbox />
-			</f:entry>
-			<f:entry field="syncDisabled" title="${%Sync Enabled/Disabled State}">
-				<f:checkbox />
-			</f:entry>
-			<f:entry field="syncMatrixAxis" title="${%Sync Matrix Axis Configuration}">
-				<f:checkbox />
-			</f:entry>
-			<f:entry field="syncSecurity" title="${%Sync Project-Based Security}">
-				<f:checkbox />
-			</f:entry>
-			<f:entry field="syncScm" title="${%Sync Source Control Mgmt}">
-				<f:checkbox default="true" />
-			</f:entry>
-			<f:entry field="syncOwnership" title="${%Sync Ownership}">
-				<f:checkbox />
-			</f:entry>
-			<f:entry field="syncAssignedLabel" title="${%Sync Assigned Label}">
-				<f:checkbox default="true" />
-			</f:entry>
-		</f:advanced>
-	</f:optionalBlock>
+    <f:advanced>
+      <f:entry>
+        Features exempted from templating:
+        <j:set var="selections" value="${instance.exclusions}"/>
+        <j:forEach var="e" items="${instance.exclusionDefinitions}">
+          <f:entry title="${e.id}">
+            <j:choose>
+              <j:when test="${e.disabledText != null}">
+                <label tooltip="${%Not applicable}: ${e.disabledText}">
+                  <input type="checkbox" disabled="disabled"/>
+                  ${e.description}
+                </label>
+              </j:when>
+              <j:otherwise>
+                <f:checkbox title="${e.description}" name="exclusions" default="${instance.exclusions.contains(e.id)}"
+                            json="${e.id}"/>
+              </j:otherwise>
+            </j:choose>
+          </f:entry>
+        </j:forEach>
+      </f:entry>
+    </f:advanced>
+
+  </f:optionalBlock>
 </j:jelly>

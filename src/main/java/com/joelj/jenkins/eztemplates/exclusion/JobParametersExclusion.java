@@ -5,6 +5,7 @@ import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
+import jenkins.model.Jenkins;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -26,6 +27,11 @@ public class JobParametersExclusion extends HardCodedExclusion {
     @Override
     public String getDescription() {
         return "Retain local job parameter values";
+    }
+
+    @Override
+    public String getDisabledText() {
+        return null;
     }
 
     @Override

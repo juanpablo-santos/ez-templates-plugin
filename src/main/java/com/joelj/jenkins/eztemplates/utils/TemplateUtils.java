@@ -1,6 +1,7 @@
 package com.joelj.jenkins.eztemplates.utils;
 
 import com.joelj.jenkins.eztemplates.*;
+import com.joelj.jenkins.eztemplates.exclusion.Exclusion;
 import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
 import com.joelj.jenkins.eztemplates.exclusion.HardCodedExclusion;
 import com.joelj.jenkins.eztemplates.promotedbuilds.PromotedBuildsTemplateUtils;
@@ -61,8 +62,8 @@ public class TemplateUtils {
                 false,
                 false,
                 false,
-                true
-        );
+                true,
+                Exclusions.DEFAULT);
         copy.addProperty(implProperty);
     }
 
@@ -81,12 +82,12 @@ public class TemplateUtils {
             throw new IllegalStateException(String.format("Cannot find template [%s] used by job [%s]", property.getTemplateJobName(), implementationProject.getFullDisplayName()));
         }
 
-        Collection<HardCodedExclusion> exclusions = Exclusions.configuredExclusions(property);
+        Collection<Exclusion> exclusions = Exclusions.configuredExclusions(property);
 
         // Capture values we want to keep
-        for (HardCodedExclusion exclusion : exclusions) {
+        for (Exclusion exclusion : exclusions) {
             try {
-                exclusion.preClone(implementationProject);
+                ((HardCodedExclusion)exclusion).preClone(implementationProject);
             } catch (RuntimeException e) {
                 LOG.log(Level.WARNING, String.format("Templating failed analyse %s", exclusion), e);
             }
@@ -95,9 +96,9 @@ public class TemplateUtils {
         implementationProject = cloneTemplate(implementationProject, templateProject);
 
         // Restore values we want to keep - via reflection to prevent infinite save recursion
-        for (HardCodedExclusion exclusion : exclusions) {
+        for (Exclusion exclusion : exclusions) {
             try {
-            exclusion.postClone(implementationProject);
+                ((HardCodedExclusion)exclusion).postClone(implementationProject);
             } catch (RuntimeException e) {
                 LOG.log(Level.WARNING, String.format("Templating failed apply %s", exclusion), e);
             }

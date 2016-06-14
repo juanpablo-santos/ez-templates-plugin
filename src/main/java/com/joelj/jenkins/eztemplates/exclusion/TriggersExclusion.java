@@ -4,6 +4,7 @@ import com.joelj.jenkins.eztemplates.utils.ProjectUtils;
 import hudson.model.AbstractProject;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
+import jenkins.model.Jenkins;
 
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,17 @@ public class TriggersExclusion extends HardCodedExclusion {
 
     @Override
     public String getId() {
-        return "triggers";
+        return "build-triggers";
     }
 
     @Override
     public String getDescription() {
-        return "Retain local build triggers";
+        return "Retain local Build Triggers";
+    }
+
+    @Override
+    public String getDisabledText() {
+        return null;
     }
 
     @Override

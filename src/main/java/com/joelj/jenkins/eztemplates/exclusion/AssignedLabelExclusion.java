@@ -3,6 +3,7 @@ package com.joelj.jenkins.eztemplates.exclusion;
 import com.google.common.base.Throwables;
 import hudson.model.AbstractProject;
 import hudson.model.Label;
+import jenkins.model.Jenkins;
 
 import java.io.IOException;
 
@@ -11,12 +12,17 @@ public class AssignedLabelExclusion extends HardCodedExclusion {
 
     @Override
     public String getId() {
-        return "scm";
+        return "assigned-label";
     }
 
     @Override
     public String getDescription() {
-        return "Retain local scm block";
+        return "Retain local assigned label";
+    }
+
+    @Override
+    public String getDisabledText() {
+        return null;
     }
 
     @Override

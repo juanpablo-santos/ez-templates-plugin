@@ -7,22 +7,30 @@ import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.JobProperty;
+import jenkins.model.Jenkins;
 
 import java.io.IOException;
 
 public class EzTemplatesExclusion extends HardCodedExclusion {
+
+    public static final String ID = "ez-templates";
     private String displayName;
     private JobProperty templateProperty;
     private JobProperty templateImplementationProperty;
 
     @Override
     public String getId() {
-        return "ez-templates";
+        return ID;
     }
 
     @Override
     public String getDescription() {
-        return "Mandatory fields";
+        return "Retain EZ-Templates mandatory fields";
+    }
+
+    @Override
+    public String getDisabledText() {
+        return "Cannot unselect this one!";
     }
 
     @Override

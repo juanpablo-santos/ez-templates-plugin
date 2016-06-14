@@ -3,6 +3,7 @@ package com.joelj.jenkins.eztemplates.exclusion;
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractProject;
+import jenkins.model.Jenkins;
 
 import java.lang.reflect.Method;
 
@@ -19,6 +20,11 @@ public class MatrixAxisExclusion extends HardCodedExclusion {
     @Override
     public String getDescription() {
         return "Retain local matrix axes";
+    }
+
+    @Override
+    public String getDisabledText() {
+        return Exclusions.checkPlugin("matrix");
     }
 
     @Override

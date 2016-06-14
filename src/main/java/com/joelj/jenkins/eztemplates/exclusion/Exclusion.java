@@ -4,4 +4,6 @@ public interface Exclusion {
     String getId();
 
     String getDescription();
+
+    String getDisabledText();
 }

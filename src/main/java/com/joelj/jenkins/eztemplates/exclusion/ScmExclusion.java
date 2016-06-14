@@ -3,6 +3,7 @@ package com.joelj.jenkins.eztemplates.exclusion;
 import com.google.common.base.Throwables;
 import hudson.model.AbstractProject;
 import hudson.scm.SCM;
+import jenkins.model.Jenkins;
 
 import java.io.IOException;
 
@@ -16,7 +17,12 @@ public class ScmExclusion extends HardCodedExclusion {
 
     @Override
     public String getDescription() {
-        return "Retain local scm block";
+        return "Retain local Source Code Management";
+    }
+
+    @Override
+    public String getDisabledText() {
+        return null;
     }
 
     @Override

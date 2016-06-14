@@ -1,5 +1,7 @@
 package com.joelj.jenkins.eztemplates;
 
+import com.joelj.jenkins.eztemplates.exclusion.Exclusion;
+import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
 import com.joelj.jenkins.eztemplates.utils.ProjectUtils;
 import hudson.Extension;
 import hudson.model.AbstractProject;
@@ -14,6 +16,8 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.Exported;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class TemplateImplementationProperty extends JobProperty<AbstractProject<?, ?>> {
@@ -28,9 +32,10 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
     private final boolean syncScm;
     private final boolean syncOwnership;
     private final boolean syncAssignedLabel;
+    private final List<String> exclusions;
 
     @DataBoundConstructor
-    public TemplateImplementationProperty(String templateJobName, boolean syncMatrixAxis, boolean syncDescription, boolean syncBuildTriggers, boolean syncDisabled, boolean syncSecurity, boolean syncScm, boolean syncOwnership, boolean syncAssignedLabel) {
+    public TemplateImplementationProperty(String templateJobName, boolean syncMatrixAxis, boolean syncDescription, boolean syncBuildTriggers, boolean syncDisabled, boolean syncSecurity, boolean syncScm, boolean syncOwnership, boolean syncAssignedLabel, List<String> exclusions) {
         this.templateJobName = templateJobName;
         this.syncMatrixAxis = syncMatrixAxis;
         this.syncDescription = syncDescription;
@@ -40,6 +45,7 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
         this.syncScm = syncScm;
         this.syncOwnership = syncOwnership;
         this.syncAssignedLabel = syncAssignedLabel;
+        this.exclusions = exclusions;
     }
 
     @Exported
@@ -51,37 +57,12 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
         this.templateJobName = templateJobName;
     }
 
-    @Exported
-    public boolean getSyncMatrixAxis() {
-        return syncMatrixAxis;
+    public Collection<Exclusion> getExclusionDefinitions() {
+        return Exclusions.ALL.values();
     }
 
-    public boolean getSyncDescription() {
-        return syncDescription;
-    }
-
-    public boolean getSyncBuildTriggers() {
-        return syncBuildTriggers;
-    }
-
-    public boolean getSyncDisabled() {
-        return syncDisabled;
-    }
-
-    public boolean getSyncSecurity() {
-        return syncSecurity;
-    }
-
-    public boolean getSyncScm() {
-        return syncScm;
-    }
-
-    public boolean getSyncOwnership() {
-        return syncOwnership;
-    }
-
-    public boolean getSyncAssignedLabel() {
-        return syncAssignedLabel;
+    public List<String> getExclusions() {
+        return exclusions;
     }
 
     public AbstractProject findTemplate() {

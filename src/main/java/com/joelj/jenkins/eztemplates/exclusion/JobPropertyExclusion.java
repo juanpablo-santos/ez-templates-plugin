@@ -3,6 +3,7 @@ package com.joelj.jenkins.eztemplates.exclusion;
 import com.google.common.base.Throwables;
 import hudson.model.AbstractProject;
 import hudson.model.JobProperty;
+import jenkins.model.Jenkins;
 
 import java.io.IOException;
 
@@ -47,5 +48,11 @@ public class JobPropertyExclusion extends HardCodedExclusion {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getDisabledText() {
+        // Assumes id is _also_ the plugin
+        return Exclusions.checkPlugin(id);
     }
 }
