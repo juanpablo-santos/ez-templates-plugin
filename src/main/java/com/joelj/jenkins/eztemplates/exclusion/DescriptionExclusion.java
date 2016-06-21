@@ -6,11 +6,13 @@ import hudson.model.AbstractProject;
 import jenkins.model.Jenkins;
 
 public class DescriptionExclusion extends HardCodedExclusion {
+
+    public static final String ID = "description";
     private String description;
 
     @Override
     public String getId() {
-        return "description";
+        return ID;
     }
 
     @Override

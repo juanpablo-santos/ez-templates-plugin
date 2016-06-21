@@ -8,11 +8,13 @@ import jenkins.model.Jenkins;
 import java.io.IOException;
 
 public class AssignedLabelExclusion extends HardCodedExclusion {
+
+    public static final String ID = "assigned-label";
     private Label label;
 
     @Override
     public String getId() {
-        return "assigned-label";
+        return ID;
     }
 
     @Override

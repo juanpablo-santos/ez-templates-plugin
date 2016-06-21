@@ -25,7 +25,7 @@ public class EzTemplatesExclusion extends HardCodedExclusion {
 
     @Override
     public String getDescription() {
-        return "Retain EZ-Templates mandatory fields";
+        return "Retain EZ Templates mandatory fields";
     }
 
     @Override

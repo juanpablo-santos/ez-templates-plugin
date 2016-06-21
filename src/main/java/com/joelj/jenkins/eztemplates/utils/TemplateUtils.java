@@ -53,17 +53,7 @@ public class TemplateUtils {
         LOG.info(String.format("Template [%s] was copied to [%s]. Forcing new project to be an implementation of the original.",original.getFullDisplayName(), copy.getFullDisplayName()));
         copy.removeProperty(TemplateProperty.class);
         copy.removeProperty(TemplateImplementationProperty.class);
-        TemplateImplementationProperty implProperty = new TemplateImplementationProperty(
-                original.getFullName(),
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                true,
-                Exclusions.DEFAULT);
+        TemplateImplementationProperty implProperty = TemplateImplementationProperty.newImplementation(original.getFullName());
         copy.addProperty(implProperty);
     }
 

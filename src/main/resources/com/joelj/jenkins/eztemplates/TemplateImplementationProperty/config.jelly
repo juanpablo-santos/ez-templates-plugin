@@ -19,22 +19,42 @@
     <f:advanced>
       <f:entry>
         Features exempted from templating:
-        <j:set var="selections" value="${instance.exclusions}"/>
-        <j:forEach var="e" items="${instance.exclusionDefinitions}">
-          <f:entry title="${e.id}">
-            <j:choose>
-              <j:when test="${e.disabledText != null}">
-                <label tooltip="${%Not applicable}: ${e.disabledText}">
-                  <input type="checkbox" disabled="disabled"/>
-                  ${e.description}
-                </label>
-              </j:when>
-              <j:otherwise>
-                <f:checkbox title="${e.description}" name="exclusions" default="${instance.exclusions.contains(e.id)}"
+        <j:choose>
+          <!-- post-migration, replace with inline -->
+          <!--<j:set var="selections" value="${instance==null?descriptor.defaultExclusions:instance.exclusions}"/>-->
+          <j:when test="${instance==null}">
+            <j:set var="selections" value="${descriptor.defaultExclusions}"/>
+          </j:when>
+          <j:when test="${instance.exclusions!=null}">
+            <j:set var="selections" value="${instance.exclusions}"/>
+          </j:when>
+          <j:otherwise>
+            <j:set var="selections" value="${descriptor.migrateExclusions(instance.syncDescription,instance.syncDisabled,instance.syncMatrixAxis,instance.syncBuildTriggers,instance.syncSecurity,instance.syncScm,instance.syncOwnership,instance.syncAssignedLabel)}"/>
+          </j:otherwise>
+        </j:choose>
+        <f:invisibleEntry>
+          <!-- force ez-templates into the exclusion list -->
+          <div style="display: none;">
+            <f:checkbox title="${e.description}" name="exclusions" default="true"
+                        json="ez-templates"/>
+          </div>
+        </f:invisibleEntry>
+        <j:forEach var="e" items="${descriptor.exclusionDefinitions}">
+          <j:choose>
+            <j:when test="${e.disabledText != null}">
+              <f:entry title="${e.id}">
+                <!-- workaround for a disabled f:checkbox -->
+                <input type="checkbox" disabled="disabled" />
+                ${e.description}
+              </f:entry>
+            </j:when>
+            <j:otherwise>
+              <f:entry title="${e.id}">
+                <f:checkbox title="${e.description}" name="exclusions" default="${selections.contains(e.id)}"
                             json="${e.id}"/>
-              </j:otherwise>
-            </j:choose>
-          </f:entry>
+              </f:entry>
+            </j:otherwise>
+          </j:choose>
         </j:forEach>
       </f:entry>
     </f:advanced>

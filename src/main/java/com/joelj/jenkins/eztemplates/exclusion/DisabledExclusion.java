@@ -5,11 +5,13 @@ import hudson.model.AbstractProject;
 import jenkins.model.Jenkins;
 
 public class DisabledExclusion extends HardCodedExclusion {
+
+    public static final String ID = "disabled";
     private boolean disabled;
 
     @Override
     public String getId() {
-        return "disabled";
+        return ID;
     }
 
     @Override

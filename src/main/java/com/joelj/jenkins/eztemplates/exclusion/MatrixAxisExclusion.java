@@ -9,12 +9,13 @@ import java.lang.reflect.Method;
 
 public class MatrixAxisExclusion extends HardCodedExclusion {
 
+    public static final String ID = "matrix-axis";
     private static final String MATRIX_PROJECT = "hudson.matrix.MatrixProject";
     private Object axes; // AxesList
 
     @Override
     public String getId() {
-        return "matrix-axis";
+        return ID;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class MatrixAxisExclusion extends HardCodedExclusion {
 
     @Override
     public String getDisabledText() {
-        return Exclusions.checkPlugin("matrix");
+        return Exclusions.checkPlugin("matrix-project");
     }
 
     @Override

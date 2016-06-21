@@ -16,6 +16,9 @@ public class Exclusions {
     public static final Map<String, Exclusion> ALL;
     public static final List<String> DEFAULT;
 
+    public static final String MATRIX_SECURITY_ID = "matrix-auth";
+    public static final String OWNERSHIP_ID = "ownership";
+
     static {
         ImmutableList.Builder<Exclusion> builder = ImmutableList.builder();
         builder.add(new EzTemplatesExclusion());
@@ -23,8 +26,8 @@ public class Exclusions {
         builder.add(new TriggersExclusion());
         builder.add(new DisabledExclusion());
         builder.add(new DescriptionExclusion());
-        builder.add(new JobPropertyExclusion("ownership", "Retain local ownership property", "com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty"));
-        builder.add(new JobPropertyExclusion("matrix-security", "Retain local matrix-build security", "hudson.security.AuthorizationMatrixProperty"));
+        builder.add(new JobPropertyExclusion(OWNERSHIP_ID, "Retain local ownership property", "com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty"));
+        builder.add(new JobPropertyExclusion(MATRIX_SECURITY_ID, "Retain local matrix-build security", "hudson.security.AuthorizationMatrixProperty"));
         builder.add(new ScmExclusion());
         builder.add(new AssignedLabelExclusion());
         builder.add(new MatrixAxisExclusion());
@@ -39,10 +42,10 @@ public class Exclusions {
 
     static {
         DEFAULT = ImmutableList.of(
-                "ez-templates",
-                "job-params",
-                "disabled",
-                "description"
+                EzTemplatesExclusion.ID,
+                JobParametersExclusion.ID,
+                DisabledExclusion.ID,
+                DescriptionExclusion.ID
         );
     }
 
@@ -51,7 +54,7 @@ public class Exclusions {
     }
 
     public static String checkPlugin(String id) {
-        return Jenkins.getInstance().getPlugin(id)==null?null:String.format("Plugin %s is not installed", id);
+        return Jenkins.getInstance().getPlugin(id)==null?String.format("Plugin %s is not installed", id):null;
     }
 
 }

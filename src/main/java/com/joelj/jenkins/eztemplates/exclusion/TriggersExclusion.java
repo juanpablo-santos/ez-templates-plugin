@@ -10,11 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 public class TriggersExclusion extends HardCodedExclusion {
+
+    public static final String ID = "build-triggers";
     private Map<TriggerDescriptor, Trigger> oldTriggers;
 
     @Override
     public String getId() {
-        return "build-triggers";
+        return ID;
     }
 
     @Override

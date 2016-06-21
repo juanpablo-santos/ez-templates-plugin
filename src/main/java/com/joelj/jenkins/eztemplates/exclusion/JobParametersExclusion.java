@@ -16,12 +16,13 @@ import java.util.logging.Logger;
 public class JobParametersExclusion extends HardCodedExclusion {
 
     private static final Logger LOG = Logger.getLogger("ez-templates");
+    public static final String ID = "job-params";
 
     private List<ParameterDefinition> oldImplementationParameters;
 
     @Override
     public String getId() {
-        return "job-params";
+        return ID;
     }
 
     @Override

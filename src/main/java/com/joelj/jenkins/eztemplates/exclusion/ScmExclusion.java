@@ -8,11 +8,13 @@ import jenkins.model.Jenkins;
 import java.io.IOException;
 
 public class ScmExclusion extends HardCodedExclusion {
+
+    public static final String ID = "scm";
     private SCM scm;
 
     @Override
     public String getId() {
-        return "scm";
+        return ID;
     }
 
     @Override
