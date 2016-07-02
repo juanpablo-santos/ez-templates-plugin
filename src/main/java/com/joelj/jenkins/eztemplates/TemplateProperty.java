@@ -11,6 +11,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 public class TemplateProperty extends JobProperty<AbstractProject<?, ?>> {
@@ -18,7 +19,7 @@ public class TemplateProperty extends JobProperty<AbstractProject<?, ?>> {
     public static Collection<AbstractProject> getImplementations(final String templateFullName) {
         Collection<AbstractProject> projects = ProjectUtils.findProjectsWithProperty(TemplateImplementationProperty.class);
         return Collections2.filter(projects, new Predicate<AbstractProject>() {
-            public boolean apply(AbstractProject abstractProject) {
+            public boolean apply(@Nonnull AbstractProject abstractProject) {
                 TemplateImplementationProperty prop = (TemplateImplementationProperty) abstractProject.getProperty(TemplateImplementationProperty.class);
                 return templateFullName.equals(prop.getTemplateJobName());
             }

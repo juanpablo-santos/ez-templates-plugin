@@ -5,6 +5,7 @@ import com.joelj.jenkins.eztemplates.exclusion.Exclusion;
 import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
 import com.joelj.jenkins.eztemplates.exclusion.HardCodedExclusion;
 import com.joelj.jenkins.eztemplates.promotedbuilds.PromotedBuildsTemplateUtils;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.*;
 import jenkins.model.Jenkins;
 
@@ -97,6 +98,7 @@ public class TemplateUtils {
         ProjectUtils.silentSave(implementationProject);
     }
 
+    @SuppressFBWarnings
     private static AbstractProject cloneTemplate(AbstractProject implementationProject, AbstractProject templateProject) throws IOException {
         AbstractProject cloned = synchronizeConfigFiles(implementationProject, templateProject);
         if (Jenkins.getInstance().getPlugin("promoted-builds") != null) {
@@ -105,6 +107,7 @@ public class TemplateUtils {
         return cloned;
     }
 
+    @SuppressFBWarnings
     private static AbstractProject synchronizeConfigFiles(AbstractProject implementationProject, AbstractProject templateProject) throws IOException {
         File templateConfigFile = templateProject.getConfigFile().getFile();
         BufferedReader reader = new BufferedReader(new FileReader(templateConfigFile));

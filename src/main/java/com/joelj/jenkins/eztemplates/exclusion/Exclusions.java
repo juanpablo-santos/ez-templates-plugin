@@ -5,8 +5,10 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.joelj.jenkins.eztemplates.TemplateImplementationProperty;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jenkins.model.Jenkins;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +36,7 @@ public class Exclusions {
         List<Exclusion> l = builder.build();
         ALL = Maps.uniqueIndex(l, new Function<Exclusion, String>() {
             @Override
-            public String apply(Exclusion exclusion) {
+            public String apply(@Nonnull Exclusion exclusion) {
                 return exclusion.getId();
             }
         });
@@ -53,6 +55,7 @@ public class Exclusions {
         return Maps.filterKeys(ALL, Predicates.in(property.getExclusions())).values();
     }
 
+    @SuppressFBWarnings
     public static String checkPlugin(String id) {
         return Jenkins.getInstance().getPlugin(id)==null?String.format("Plugin %s is not installed", id):null;
     }
