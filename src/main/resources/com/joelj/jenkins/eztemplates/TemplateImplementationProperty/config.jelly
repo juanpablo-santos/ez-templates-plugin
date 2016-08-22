@@ -19,19 +19,7 @@
     <f:advanced>
       <f:entry>
         Features exempted from templating:
-        <j:choose>
-          <!-- post-migration, replace with inline -->
-          <!--<j:set var="selections" value="${instance==null?descriptor.defaultExclusions:instance.exclusions}"/>-->
-          <j:when test="${instance==null}">
-            <j:set var="selections" value="${descriptor.defaultExclusions}"/>
-          </j:when>
-          <j:when test="${instance.exclusions!=null}">
-            <j:set var="selections" value="${instance.exclusions}"/>
-          </j:when>
-          <j:otherwise>
-            <j:set var="selections" value="${descriptor.migrateExclusions(instance.syncDescription,instance.syncDisabled,instance.syncMatrixAxis,instance.syncBuildTriggers,instance.syncSecurity,instance.syncScm,instance.syncOwnership,instance.syncAssignedLabel)}"/>
-          </j:otherwise>
-        </j:choose>
+        <j:set var="selections" value="${instance==null?descriptor.defaultExclusions:instance.exclusions}"/>
         <f:invisibleEntry>
           <!-- force ez-templates into the exclusion list -->
           <div style="display: none;">

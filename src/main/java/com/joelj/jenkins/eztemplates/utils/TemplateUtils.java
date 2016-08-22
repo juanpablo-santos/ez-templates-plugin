@@ -61,16 +61,16 @@ public class TemplateUtils {
     public static void handleTemplateImplementationSaved(AbstractProject implementationProject, TemplateImplementationProperty property) throws IOException {
     	
         if (property.getTemplateJobName().equals("null")) {
-            LOG.warning(String.format("Implementation [%s] was saved. No template selected.", implementationProject.getFullDisplayName()));
+            LOG.warning(String.format("Implementation [%s] but has no template selected.", implementationProject.getFullDisplayName()));
             return;
         }
-    	
-        LOG.info(String.format("Implementation [%s] was saved. Syncing with [%s].", implementationProject.getFullDisplayName(), property.getTemplateJobName()));
+
+        LOG.info(String.format("Implementation [%s] syncing with [%s].", implementationProject.getFullDisplayName(), property.getTemplateJobName()));
         
         AbstractProject templateProject = property.findTemplate();        
         if (templateProject == null) {
         	// If the template can't be found, then it's probably a bug
-            throw new IllegalStateException(String.format("Cannot find template [%s] used by job [%s]", property.getTemplateJobName(), implementationProject.getFullDisplayName()));
+            throw new IllegalStateException(String.format("Cannot find template [%s] used by implementation [%s]", property.getTemplateJobName(), implementationProject.getFullDisplayName()));
         }
 
         Collection<Exclusion> exclusions = Exclusions.configuredExclusions(property);

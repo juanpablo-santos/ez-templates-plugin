@@ -32,7 +32,7 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
     private final boolean syncScm;
     private final boolean syncOwnership;
     private final boolean syncAssignedLabel;
-    private final List<String> exclusions;
+    private List<String> exclusions; // Non-final until we drop support for upgrade from 1.1.x
 
     public static TemplateImplementationProperty newImplementation(String templateJobName) {
         return new TemplateImplementationProperty(
@@ -46,7 +46,7 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
     public TemplateImplementationProperty(String templateJobName, List<String> exclusions, boolean syncDescription, boolean syncDisabled, boolean syncMatrixAxis, boolean syncBuildTriggers, boolean syncSecurity, boolean syncScm, boolean syncOwnership, boolean syncAssignedLabel) {
         this.exclusions = exclusions;
         this.templateJobName = templateJobName;
-        // Support for rollback to <1.3.0
+        // Support for rollback to <1.2.0
         this.syncDescription = !exclusions.contains(DescriptionExclusion.ID);
         this.syncDisabled = !exclusions.contains(DisabledExclusion.ID);
         this.syncMatrixAxis = !exclusions.contains(MatrixAxisExclusion.ID);
@@ -67,6 +67,21 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
     }
 
     public List<String> getExclusions() {
+        if (exclusions==null) {
+            LOG.info("Upgrading from earlier EZ Templates installation");
+            ImmutableList.Builder<String> list = ImmutableList.builder();
+            list.add(EzTemplatesExclusion.ID);
+            list.add(JobParametersExclusion.ID);
+            if (!syncDescription) list.add(DescriptionExclusion.ID);
+            if (!syncDisabled) list.add(DisabledExclusion.ID);
+            if (!syncMatrixAxis) list.add(MatrixAxisExclusion.ID);
+            if (!syncBuildTriggers) list.add(TriggersExclusion.ID);
+            if (!syncSecurity) list.add(Exclusions.MATRIX_SECURITY_ID);
+            if (!syncScm) list.add(ScmExclusion.ID);
+            if (!syncOwnership) list.add(Exclusions.OWNERSHIP_ID);
+            if (!syncAssignedLabel) list.add(AssignedLabelExclusion.ID);
+            exclusions = list.build();
+        }
         return exclusions;
     }
 
@@ -158,30 +173,6 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
 
         public List<String> getDefaultExclusions() {
             return Exclusions.DEFAULT;
-        }
-
-        public List<String> migrateExclusions(
-                boolean syncDescription,
-                boolean syncDisabled,
-                boolean syncMatrixAxis,
-                boolean syncBuildTriggers,
-                boolean syncSecurity,
-                boolean syncScm,
-                boolean syncOwnership,
-                boolean syncAssignedLabel) {
-            LOG.info("Upgrading from earlier EZ Templates installation");
-            ImmutableList.Builder<String> list = ImmutableList.builder();
-            list.add(EzTemplatesExclusion.ID);
-            list.add(JobParametersExclusion.ID);
-            if (!syncDescription) list.add(DescriptionExclusion.ID);
-            if (!syncDisabled) list.add(DisabledExclusion.ID);
-            if (!syncMatrixAxis) list.add(MatrixAxisExclusion.ID);
-            if (!syncBuildTriggers) list.add(TriggersExclusion.ID);
-            if (!syncSecurity) list.add(Exclusions.MATRIX_SECURITY_ID);
-            if (!syncScm) list.add(ScmExclusion.ID);
-            if (!syncOwnership) list.add(Exclusions.OWNERSHIP_ID);
-            if (!syncAssignedLabel) list.add(AssignedLabelExclusion.ID);
-            return list.build();
         }
 
     }
