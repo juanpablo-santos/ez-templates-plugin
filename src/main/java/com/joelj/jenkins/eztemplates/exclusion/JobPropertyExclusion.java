@@ -13,7 +13,7 @@ public class JobPropertyExclusion extends HardCodedExclusion {
     private final String id;
     private final String description;
     private final String className;
-    private JobProperty cached;
+    protected JobProperty cached;
 
     public JobPropertyExclusion(String id, String description, String className) {
         this.id = id;

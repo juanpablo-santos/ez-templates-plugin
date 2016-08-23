@@ -1,107 +1,69 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
-import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-import jenkins.model.Jenkins;
 
-import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class JobParametersExclusion extends HardCodedExclusion {
+public class JobParametersExclusion extends JobPropertyExclusion {
 
     private static final Logger LOG = Logger.getLogger("ez-templates");
     public static final String ID = "job-params";
 
-    private List<ParameterDefinition> oldImplementationParameters;
-
-    @Override
-    public String getId() {
-        return ID;
-    }
-
-    @Override
-    public String getDescription() {
-        return "Retain local job parameter values";
-    }
-
-    @Override
-    public String getDisabledText() {
-        return null;
-    }
-
-    @Override
-    public void preClone(AbstractProject implementationProject) {
-        oldImplementationParameters = findParameters(implementationProject);
+    public JobParametersExclusion() {
+        super(ID, "Retain local job parameter values", ParametersDefinitionProperty.class.getName());
     }
 
     @Override
     public void postClone(AbstractProject implementationProject) {
-        try {
-            fixParameters(implementationProject, oldImplementationParameters);
-        } catch (IOException e) {
-            Throwables.propagate(e);
-        }
+        super.cached = merge(
+                parameters((ParametersDefinitionProperty) cached),
+                parameters(implementationProject)
+        );
+        super.postClone(implementationProject);
     }
 
-    private static List<ParameterDefinition> findParameters(AbstractProject implementationProject) {
-        List<ParameterDefinition> definitions = new LinkedList<ParameterDefinition>();
+    private static List<ParameterDefinition> parameters(AbstractProject implementationProject) {
         @SuppressWarnings("unchecked")
         ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty) implementationProject.getProperty(ParametersDefinitionProperty.class);
-        if (parametersDefinitionProperty != null) {
-            for (String parameterName : parametersDefinitionProperty.getParameterDefinitionNames()) {
-                definitions.add(parametersDefinitionProperty.getParameterDefinition(parameterName));
-            }
-        }
-        return definitions;
+        return parameters(parametersDefinitionProperty);
     }
 
-    private static void fixParameters(AbstractProject implementationProject, List<ParameterDefinition> oldImplementationParameters) throws IOException {
-        List<ParameterDefinition> newImplementationParameters = findParameters(implementationProject);
-
-        ParametersDefinitionProperty newParameterAction = findParametersToKeep(oldImplementationParameters, newImplementationParameters);
-        @SuppressWarnings("unchecked") ParametersDefinitionProperty toRemove = (ParametersDefinitionProperty) implementationProject.getProperty(ParametersDefinitionProperty.class);
-        if (toRemove != null) {
-            //noinspection unchecked
-            implementationProject.removeProperty(toRemove);
-        }
-        if (newParameterAction != null) {
-            //noinspection unchecked
-            implementationProject.addProperty(newParameterAction);
-        }
+    private static List<ParameterDefinition> parameters(ParametersDefinitionProperty parametersDefinitionProperty) {
+        return (parametersDefinitionProperty == null)? Collections.<ParameterDefinition>emptyList():parametersDefinitionProperty.getParameterDefinitions();
     }
 
-    private static ParametersDefinitionProperty findParametersToKeep(List<ParameterDefinition> oldImplementationParameters, List<ParameterDefinition> newImplementationParameters) {
+    private static ParametersDefinitionProperty merge(List<ParameterDefinition> oldParameters, List<ParameterDefinition> newParameters) {
         List<ParameterDefinition> result = new LinkedList<ParameterDefinition>();
-        for (ParameterDefinition newImplementationParameter : newImplementationParameters) { //'new' parameters are the same as the template.
+        for (ParameterDefinition newParameter : newParameters) { //'new' parameters are the same as the template.
             boolean found = false;
-            Iterator<ParameterDefinition> iterator = oldImplementationParameters.iterator();
+            Iterator<ParameterDefinition> iterator = oldParameters.iterator();
             while (iterator.hasNext()) {
-                ParameterDefinition oldImplementationParameter = iterator.next();
-                if (newImplementationParameter.getName().equals(oldImplementationParameter.getName())) {
+                ParameterDefinition oldParameter = iterator.next();
+                if (newParameter.getName().equals(oldParameter.getName())) {
                     found = true;
                     iterator.remove(); //Make the next iteration a little faster.
                     // #17 Description on parameters should always be overridden by template
-                    EzReflectionUtils.setFieldValue(ParameterDefinition.class, oldImplementationParameter, "description", newImplementationParameter.getDescription());
-                    result.add(oldImplementationParameter);
+                    EzReflectionUtils.setFieldValue(ParameterDefinition.class, oldParameter, "description", newParameter.getDescription());
+                    result.add(oldParameter);
                 }
             }
             if (!found) {
                 //Add new parameters not accounted for.
-                result.add(newImplementationParameter);
-                LOG.info(String.format("\t+++ new parameter [%s]", newImplementationParameter.getName()));
+                result.add(newParameter);
+                LOG.info(String.format("\t+++ new parameter [%s]", newParameter.getName()));
             }
         }
 
-        if (oldImplementationParameters != null) {
-            for (ParameterDefinition unused : oldImplementationParameters) {
-                LOG.info(String.format("\t--- old parameter [%s]", unused.getName()));
-            }
+        // Anything left in oldParameters was not matched and will be removed
+        for (ParameterDefinition unused : oldParameters) {
+            LOG.info(String.format("\t--- old parameter [%s]", unused.getName()));
         }
 
         return result.isEmpty() ? null : new ParametersDefinitionProperty(result);
