@@ -3,7 +3,6 @@ package com.joelj.jenkins.eztemplates.exclusion;
 import com.google.common.base.Throwables;
 import hudson.model.AbstractProject;
 import hudson.model.JobProperty;
-import jenkins.model.Jenkins;
 
 import java.io.IOException;
 
@@ -32,8 +31,10 @@ public class JobPropertyExclusion extends HardCodedExclusion {
     public void postClone(AbstractProject implementationProject) {
         try {
             if (cached != null) {
-                implementationProject.removeProperty(cached.getClass());
-                implementationProject.addProperty(cached);
+                // Removed from template = removed from all impls
+                if (implementationProject.removeProperty(cached.getClass()) != null) {
+                    implementationProject.addProperty(cached);
+                }
             }
         } catch (IOException e) {
             Throwables.propagate(e);
