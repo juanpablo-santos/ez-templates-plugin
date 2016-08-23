@@ -52,21 +52,16 @@ public class ProjectUtils {
 
     /**
      * Get a project by its fullName (including any folder structure if present).
-     * Temporarily also allows a match by name if one exists.
      */
     @SuppressFBWarnings
     public static AbstractProject findProject(String fullName) {
         List<AbstractProject> projects = Jenkins.getInstance().getAllItems(AbstractProject.class);
-        AbstractProject nameOnlyMatch = null; // marc: 20140831, Remove compat patch for users upgrading
         for (AbstractProject project : projects) {
             if (fullName.equals(project.getFullName())) {
                 return project;
             }
-            if (fullName.equals(project.getName())) {
-                nameOnlyMatch = project;
-            }
         }
-        return nameOnlyMatch;
+        return null;
     }
 
     /**
