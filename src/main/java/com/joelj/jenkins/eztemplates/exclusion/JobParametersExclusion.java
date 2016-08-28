@@ -1,7 +1,9 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
+import com.google.common.collect.Lists;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 import hudson.model.AbstractProject;
+import hudson.model.ChoiceParameterDefinition;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 
@@ -36,7 +38,7 @@ public class JobParametersExclusion extends JobPropertyExclusion {
     }
 
     private static List<ParameterDefinition> parameters(ParametersDefinitionProperty parametersDefinitionProperty) {
-        return (parametersDefinitionProperty == null)? Collections.<ParameterDefinition>emptyList():parametersDefinitionProperty.getParameterDefinitions();
+        return (parametersDefinitionProperty == null) ? Collections.<ParameterDefinition>emptyList() : parametersDefinitionProperty.getParameterDefinitions();
     }
 
     private static ParametersDefinitionProperty merge(List<ParameterDefinition> oldParameters, List<ParameterDefinition> newParameters) {
@@ -49,6 +51,10 @@ public class JobParametersExclusion extends JobPropertyExclusion {
                 if (newParameter.getName().equals(oldParameter.getName())) {
                     found = true;
                     iterator.remove(); //Make the next iteration a little faster.
+                    // JENKINS-37399 Choice parameter options sync down from template
+                    if (oldParameter instanceof ChoiceParameterDefinition) {
+                        EzReflectionUtils.setFieldValue(ChoiceParameterDefinition.class, oldParameter, "choices", Lists.newArrayList(((ChoiceParameterDefinition) newParameter).getChoices()));
+                    }
                     // #17 Description on parameters should always be overridden by template
                     EzReflectionUtils.setFieldValue(ParameterDefinition.class, oldParameter, "description", newParameter.getDescription());
                     result.add(oldParameter);
