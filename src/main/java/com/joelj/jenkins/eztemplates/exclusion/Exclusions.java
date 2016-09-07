@@ -23,6 +23,7 @@ public class Exclusions {
 
     public static final String MATRIX_SECURITY_ID = "matrix-auth";
     public static final String OWNERSHIP_ID = "ownership";
+    public static final String GITHUB_ID = "github";
 
     static {
         ImmutableList.Builder<Exclusion> builder = ImmutableList.builder();
@@ -33,6 +34,7 @@ public class Exclusions {
         builder.add(new DescriptionExclusion());
         builder.add(new JobPropertyExclusion(OWNERSHIP_ID, "Retain local ownership property", "com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty"));
         builder.add(new JobPropertyExclusion(MATRIX_SECURITY_ID, "Retain local matrix-build security", "hudson.security.AuthorizationMatrixProperty"));
+        builder.add(new JobPropertyExclusion(GITHUB_ID, "Retain local Github details", "com.coravy.hudson.plugins.github.GithubProjectProperty"));
         builder.add(new ScmExclusion());
         builder.add(new AssignedLabelExclusion());
         builder.add(new MatrixAxisExclusion());
