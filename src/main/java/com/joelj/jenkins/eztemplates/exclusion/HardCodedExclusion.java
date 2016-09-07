@@ -12,4 +12,9 @@ public abstract class HardCodedExclusion implements Exclusion {
         return String.format("%s[%s]", getClass().getSimpleName(), getId());
     }
 
+    @Override
+    public Exclusion clone() throws CloneNotSupportedException {
+        return (Exclusion) super.clone();
+    }
+
 }
