@@ -15,6 +15,9 @@ Any Jenkins job can be used as a template
 A template can be a runnable job in its own right or be disabled and used only as a parent for "real" jobs.
 ![Image of template configuration](template.png)
 
+:exclamation: WARNING: Templates have the capacity to magnify a bad decision so should never be used without an automated backup
+solution in place. [ThinBackup][5] plugin is a good candidate for this.
+
 Using a template
 -------------------
 ### Existing jobs
@@ -63,3 +66,4 @@ Not everything can be parameterised in a Jenkins job config. Here's a few sample
 [2]: https://wiki.jenkins-ci.org/display/JENKINS/NodeLabel+Parameter+Plugin
 [3]: https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin
 [4]: https://wiki.jenkins-ci.org/display/JENKINS/Conditional+BuildStep+Plugin
+[5]: https://wiki.jenkins-ci.org/display/JENKINS/thinBackup
