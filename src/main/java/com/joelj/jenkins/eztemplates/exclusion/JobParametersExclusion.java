@@ -31,6 +31,11 @@ public class JobParametersExclusion extends JobPropertyExclusion {
         super.postClone(implementationProject);
     }
 
+    @Override
+    public String getDisabledText() {
+        return null; // Always available
+    }
+
     private static List<ParameterDefinition> parameters(AbstractProject implementationProject) {
         @SuppressWarnings("unchecked")
         ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty) implementationProject.getProperty(ParametersDefinitionProperty.class);
