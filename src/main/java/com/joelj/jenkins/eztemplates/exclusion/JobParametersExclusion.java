@@ -7,10 +7,7 @@ import hudson.model.ChoiceParameterDefinition;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class JobParametersExclusion extends JobPropertyExclusion {
@@ -46,14 +43,15 @@ public class JobParametersExclusion extends JobPropertyExclusion {
         return (parametersDefinitionProperty == null) ? Collections.<ParameterDefinition>emptyList() : parametersDefinitionProperty.getParameterDefinitions();
     }
 
-    private static ParametersDefinitionProperty merge(List<ParameterDefinition> oldParameters, List<ParameterDefinition> newParameters) {
+    static ParametersDefinitionProperty merge(List<ParameterDefinition> oldParameters, List<ParameterDefinition> newParameters) {
         List<ParameterDefinition> result = new LinkedList<ParameterDefinition>();
+        List<ParameterDefinition> work = new ArrayList<ParameterDefinition>(oldParameters);
         for (ParameterDefinition newParameter : newParameters) { //'new' parameters are the same as the template.
             boolean found = false;
-            Iterator<ParameterDefinition> iterator = oldParameters.iterator();
+            Iterator<ParameterDefinition> iterator = work.iterator();
             while (iterator.hasNext()) {
                 ParameterDefinition oldParameter = iterator.next();
-                if (newParameter.getName().equals(oldParameter.getName())) {
+                if (key(newParameter).equals(key(oldParameter))) {
                     found = true;
                     iterator.remove(); //Make the next iteration a little faster.
                     // JENKINS-37399 Choice parameter options sync down from template
@@ -72,12 +70,17 @@ public class JobParametersExclusion extends JobPropertyExclusion {
             }
         }
 
-        // Anything left in oldParameters was not matched and will be removed
-        for (ParameterDefinition unused : oldParameters) {
+        // Anything left in work was not matched and will be removed
+        for (ParameterDefinition unused : work) {
             LOG.info(String.format("\t--- old parameter [%s]", unused.getName()));
         }
 
         return result.isEmpty() ? null : new ParametersDefinitionProperty(result);
+    }
+
+    private static String key(ParameterDefinition parameterDefinition) {
+        // JENKINS-38308 Support changing the type of parameter
+        return parameterDefinition.getName() + parameterDefinition.getType();
     }
 
 }
