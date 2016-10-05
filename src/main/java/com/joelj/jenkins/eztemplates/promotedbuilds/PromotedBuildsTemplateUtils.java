@@ -42,7 +42,8 @@ public class PromotedBuildsTemplateUtils {
             if (list != null) {
                 for (String promotionDir : list) {
                     File templatePromotionProcess = new File(templatePromotions, promotionDir);
-                    if (new File(promotionDir + File.separatorChar + "config.xml").exists() && templatePromotionProcess.isDirectory()) {
+                    // JENKINS-38695 Don't clone .svn or .git directories, only ones that look like real promotions
+                    if (templatePromotionProcess.isDirectory() && new File(templatePromotionProcess, "config.xml").exists()) {
                         // for each promotion, create a process from its configuration
                         promotions.createProcessFromXml(promotionDir, new FileInputStream(new File(templatePromotionProcess, "config.xml")));
                     }
