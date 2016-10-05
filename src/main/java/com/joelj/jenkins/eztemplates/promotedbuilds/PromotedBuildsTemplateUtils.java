@@ -42,7 +42,7 @@ public class PromotedBuildsTemplateUtils {
             if (list != null) {
                 for (String promotionDir : list) {
                     File templatePromotionProcess = new File(templatePromotions, promotionDir);
-                    if (templatePromotionProcess.isDirectory()) {
+                    if (new File(promotionDir + File.separatorChar + "config.xml").exists() && templatePromotionProcess.isDirectory()) {
                         // for each promotion, create a process from its configuration
                         promotions.createProcessFromXml(promotionDir, new FileInputStream(new File(templatePromotionProcess, "config.xml")));
                     }
