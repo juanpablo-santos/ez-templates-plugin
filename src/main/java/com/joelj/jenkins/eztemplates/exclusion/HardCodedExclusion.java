@@ -1,11 +1,11 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 
 public abstract class HardCodedExclusion implements Exclusion {
-    public abstract void preClone(AbstractProject implementationProject);
+    public abstract void preClone(Job implementationProject);
 
-    public abstract void postClone(AbstractProject implementationProject);
+    public abstract void postClone(Job implementationProject);
 
     @Override
     public String toString() {

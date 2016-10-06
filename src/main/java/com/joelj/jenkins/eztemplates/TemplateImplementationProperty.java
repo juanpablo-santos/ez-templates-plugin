@@ -1,26 +1,39 @@
 package com.joelj.jenkins.eztemplates;
 
-import com.google.common.collect.ImmutableList;
-import com.joelj.jenkins.eztemplates.exclusion.*;
-import com.joelj.jenkins.eztemplates.utils.ProjectUtils;
-import hudson.Extension;
-import hudson.model.AbstractProject;
-import hudson.model.JobProperty;
-import hudson.model.JobPropertyDescriptor;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
-import net.sf.json.JSONObject;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Logger;
+
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.Exported;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Logger;
+import com.google.common.collect.ImmutableList;
+import com.joelj.jenkins.eztemplates.exclusion.AssignedLabelExclusion;
+import com.joelj.jenkins.eztemplates.exclusion.DescriptionExclusion;
+import com.joelj.jenkins.eztemplates.exclusion.DisabledExclusion;
+import com.joelj.jenkins.eztemplates.exclusion.Exclusion;
+import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
+import com.joelj.jenkins.eztemplates.exclusion.EzTemplatesExclusion;
+import com.joelj.jenkins.eztemplates.exclusion.JobParametersExclusion;
+import com.joelj.jenkins.eztemplates.exclusion.MatrixAxisExclusion;
+import com.joelj.jenkins.eztemplates.exclusion.ScmExclusion;
+import com.joelj.jenkins.eztemplates.exclusion.TriggersExclusion;
+import com.joelj.jenkins.eztemplates.jobtypes.JobsFacade;
+import com.joelj.jenkins.eztemplates.utils.ProjectUtils;
 
-public class TemplateImplementationProperty extends JobProperty<AbstractProject<?, ?>> {
+import hudson.Extension;
+import hudson.model.Job;
+import hudson.model.JobProperty;
+import hudson.model.JobPropertyDescriptor;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
+
+public class TemplateImplementationProperty extends JobProperty<Job<?, ?>> {
     private static final Logger LOG = Logger.getLogger("ez-templates");
 
     private String templateJobName;
@@ -85,7 +98,7 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
         return exclusions;
     }
 
-    public AbstractProject findTemplate() {
+    public Job findTemplate() {
         return ProjectUtils.findProject(getTemplateJobName());
     }
 
@@ -132,6 +145,8 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
     @SuppressWarnings("UnusedDeclaration")
     @Extension
     public static class DescriptorImpl extends JobPropertyDescriptor {
+        Class< ? extends Job > jobType;
+
         @Override
         public JobProperty<?> newInstance(StaplerRequest request, JSONObject formData) throws FormException {
             // TODO Replace with OptionalJobProperty 1.637
@@ -148,7 +163,8 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
             // a noob destroys their config
             items.add(Messages.TemplateImplementationProperty_noTemplateSelected(), null);
             // Add all discovered templates
-            for (AbstractProject project : ProjectUtils.findProjectsWithProperty(TemplateProperty.class)) {
+
+            for (Job project : ProjectUtils.findProjectsWithProperty(TemplateProperty.class, jobType)) {
                 // fullName includes any folder structure
                 items.add(project.getFullDisplayName(), project.getFullName());
             }
@@ -173,6 +189,12 @@ public class TemplateImplementationProperty extends JobProperty<AbstractProject<
 
         public List<String> getDefaultExclusions() {
             return Exclusions.DEFAULT;
+        }
+
+        @Override
+        public boolean isApplicable( Class< ? extends Job > jobType ) {
+            this.jobType = jobType;
+            return JobsFacade.isPluginApplicableTo( jobType );
         }
 
     }

@@ -1,11 +1,11 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
+import java.lang.reflect.Method;
+
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
-import hudson.model.AbstractProject;
-import jenkins.model.Jenkins;
 
-import java.lang.reflect.Method;
+import hudson.model.Job;
 
 public class MatrixAxisExclusion extends HardCodedExclusion {
 
@@ -29,14 +29,14 @@ public class MatrixAxisExclusion extends HardCodedExclusion {
     }
 
     @Override
-    public void preClone(AbstractProject implementationProject) {
+    public void preClone(Job implementationProject) {
         if (isMatrixProject(implementationProject)) {
             axes = EzReflectionUtils.getFieldValue(implementationProject.getClass(), implementationProject, "axes");
         }
     }
 
     @Override
-    public void postClone(AbstractProject implementationProject) {
+    public void postClone(Job implementationProject) {
         if (isMatrixProject(implementationProject)) {
             fixAxisList(implementationProject, axes);
         }
@@ -48,7 +48,7 @@ public class MatrixAxisExclusion extends HardCodedExclusion {
      * @param matrixProject The project to set the Axis on.
      * @param axisList      The Axis list to set.
      */
-    private static void fixAxisList(AbstractProject matrixProject, Object axisList) {
+    private static void fixAxisList(Job matrixProject, Object axisList) {
         if (axisList == null) {
             return; //The "axes" field can never be null. So just to be extra careful.
         }
@@ -68,7 +68,7 @@ public class MatrixAxisExclusion extends HardCodedExclusion {
         }
     }
 
-    private static boolean isMatrixProject(AbstractProject project) {
+    private static boolean isMatrixProject(Job project) {
         return MATRIX_PROJECT.equals(project.getClass().getName());
     }
 

@@ -1,8 +1,8 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
-import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
-import hudson.model.AbstractProject;
-import jenkins.model.Jenkins;
+import com.joelj.jenkins.eztemplates.jobtypes.JobsFacade;
+
+import hudson.model.Job;
 
 public class DisabledExclusion extends HardCodedExclusion {
 
@@ -25,13 +25,13 @@ public class DisabledExclusion extends HardCodedExclusion {
     }
 
     @Override
-    public void preClone(AbstractProject implementationProject) {
-        disabled = implementationProject.isDisabled();
+    public void preClone(Job implementationProject) {
+        disabled = JobsFacade.isDisabled( implementationProject );
     }
 
     @Override
-    public void postClone(AbstractProject implementationProject) {
-        EzReflectionUtils.setFieldValue(AbstractProject.class, implementationProject, "disabled", disabled);
+    public void postClone(Job implementationProject) {
+        JobsFacade.disable( implementationProject, disabled );
     }
 
 }

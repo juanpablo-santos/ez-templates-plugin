@@ -1,11 +1,9 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
-import com.google.common.base.Throwables;
-import hudson.model.AbstractProject;
-import hudson.scm.SCM;
-import jenkins.model.Jenkins;
+import com.joelj.jenkins.eztemplates.jobtypes.JobsFacade;
 
-import java.io.IOException;
+import hudson.model.Job;
+import hudson.scm.SCM;
 
 public class ScmExclusion extends HardCodedExclusion {
 
@@ -28,17 +26,13 @@ public class ScmExclusion extends HardCodedExclusion {
     }
 
     @Override
-    public void preClone(AbstractProject implementationProject) {
-        scm = implementationProject.getScm();
+    public void preClone(Job implementationProject) {
+        scm = JobsFacade.getScm( implementationProject );
     }
 
     @Override
-    public void postClone(AbstractProject implementationProject) {
-        try {
-            implementationProject.setScm(scm);
-        } catch (IOException e) {
-            Throwables.propagate(e);
-        }
+    public void postClone(Job implementationProject) {
+        JobsFacade.setScm( implementationProject, scm );
     }
 
 }

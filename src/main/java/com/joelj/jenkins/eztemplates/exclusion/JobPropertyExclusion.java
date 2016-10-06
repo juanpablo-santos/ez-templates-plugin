@@ -1,10 +1,11 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
-import com.google.common.base.Throwables;
-import hudson.model.AbstractProject;
-import hudson.model.JobProperty;
-
 import java.io.IOException;
+
+import com.google.common.base.Throwables;
+
+import hudson.model.Job;
+import hudson.model.JobProperty;
 
 /**
  * Generic {@link Exclusion} which retains a given {@link JobProperty} through cloning
@@ -22,13 +23,13 @@ public class JobPropertyExclusion extends HardCodedExclusion {
     }
 
     @Override
-    public void preClone(AbstractProject implementationProject) {
+    public void preClone(Job implementationProject) {
         cached = implementationProject.getProperty(className);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void postClone(AbstractProject implementationProject) {
+    public void postClone(Job implementationProject) {
         try {
             if (cached != null) {
                 // Removed from template = removed from all impls

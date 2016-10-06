@@ -1,15 +1,15 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
+import java.io.IOException;
+
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.TemplateImplementationProperty;
 import com.joelj.jenkins.eztemplates.TemplateProperty;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
-import hudson.model.AbstractItem;
-import hudson.model.AbstractProject;
-import hudson.model.JobProperty;
-import jenkins.model.Jenkins;
 
-import java.io.IOException;
+import hudson.model.AbstractItem;
+import hudson.model.Job;
+import hudson.model.JobProperty;
 
 public class EzTemplatesExclusion extends HardCodedExclusion {
 
@@ -34,14 +34,14 @@ public class EzTemplatesExclusion extends HardCodedExclusion {
     }
 
     @Override
-    public void preClone(AbstractProject implementationProject) {
+    public void preClone(Job implementationProject) {
         displayName = implementationProject.getDisplayNameOrNull();
         templateProperty = implementationProject.getProperty(TemplateProperty.class);
         templateImplementationProperty = implementationProject.getProperty(TemplateImplementationProperty.class);
     }
 
     @Override
-    public void postClone(AbstractProject implementationProject) {
+    public void postClone(Job implementationProject) {
         try {
             fixProperties(implementationProject);
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public class EzTemplatesExclusion extends HardCodedExclusion {
         }
     }
 
-    private void fixProperties(AbstractProject implementationProject) throws IOException {
+    private void fixProperties(Job implementationProject) throws IOException {
 
         EzReflectionUtils.setFieldValue(AbstractItem.class, implementationProject, "displayName", displayName);
 

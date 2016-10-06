@@ -1,9 +1,9 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
+
 import hudson.model.AbstractItem;
-import hudson.model.AbstractProject;
-import jenkins.model.Jenkins;
+import hudson.model.Job;
 
 public class DescriptionExclusion extends HardCodedExclusion {
 
@@ -26,12 +26,12 @@ public class DescriptionExclusion extends HardCodedExclusion {
     }
 
     @Override
-    public void preClone(AbstractProject implementationProject) {
+    public void preClone(Job implementationProject) {
         description = implementationProject.getDescription();
     }
 
     @Override
-    public void postClone(AbstractProject implementationProject) {
+    public void postClone(Job implementationProject) {
         EzReflectionUtils.setFieldValue(AbstractItem.class, implementationProject, "description", description);
     }
 

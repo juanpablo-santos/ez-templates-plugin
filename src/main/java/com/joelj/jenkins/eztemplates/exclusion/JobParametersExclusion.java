@@ -1,14 +1,19 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
 import com.google.common.collect.Lists;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
-import hudson.model.AbstractProject;
+
 import hudson.model.ChoiceParameterDefinition;
+import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
-
-import java.util.*;
-import java.util.logging.Logger;
 
 public class JobParametersExclusion extends JobPropertyExclusion {
 
@@ -20,7 +25,7 @@ public class JobParametersExclusion extends JobPropertyExclusion {
     }
 
     @Override
-    public void postClone(AbstractProject implementationProject) {
+    public void postClone(Job implementationProject) {
         super.cached = merge(
                 parameters((ParametersDefinitionProperty) cached),
                 parameters(implementationProject)
@@ -33,7 +38,7 @@ public class JobParametersExclusion extends JobPropertyExclusion {
         return null; // Always available
     }
 
-    private static List<ParameterDefinition> parameters(AbstractProject implementationProject) {
+    private static List<ParameterDefinition> parameters(Job implementationProject) {
         @SuppressWarnings("unchecked")
         ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty) implementationProject.getProperty(ParametersDefinitionProperty.class);
         return parameters(parametersDefinitionProperty);

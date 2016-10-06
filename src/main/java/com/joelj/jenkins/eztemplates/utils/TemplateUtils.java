@@ -1,18 +1,5 @@
 package com.joelj.jenkins.eztemplates.utils;
 
-import com.joelj.jenkins.eztemplates.TemplateImplementationProperty;
-import com.joelj.jenkins.eztemplates.TemplateProperty;
-import com.joelj.jenkins.eztemplates.exclusion.Exclusion;
-import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
-import com.joelj.jenkins.eztemplates.exclusion.HardCodedExclusion;
-import com.joelj.jenkins.eztemplates.promotedbuilds.PromotedBuildsTemplateUtils;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.model.AbstractProject;
-import hudson.model.Item;
-import jenkins.model.Jenkins;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -21,19 +8,35 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import com.joelj.jenkins.eztemplates.TemplateImplementationProperty;
+import com.joelj.jenkins.eztemplates.TemplateProperty;
+import com.joelj.jenkins.eztemplates.exclusion.Exclusion;
+import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
+import com.joelj.jenkins.eztemplates.exclusion.HardCodedExclusion;
+import com.joelj.jenkins.eztemplates.promotedbuilds.PromotedBuildsTemplateUtils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.model.AbstractProject;
+import hudson.model.Item;
+import hudson.model.Job;
+import jenkins.model.Jenkins;
+
 public class TemplateUtils {
     private static final Logger LOG = Logger.getLogger("ez-templates");
 
     public static void handleTemplateSaved(AbstractProject templateProject, TemplateProperty property) throws IOException {
         LOG.info(String.format("Template [%s] was saved. Syncing implementations.", templateProject.getFullDisplayName()));
-        for (AbstractProject impl : property.getImplementations()) {
+        for (Job impl : property.getImplementations()) {
             handleTemplateImplementationSaved(impl, getTemplateImplementationProperty(impl)); // ? continue on exception
         }
     }
 
     public static void handleTemplateDeleted(AbstractProject templateProject, TemplateProperty property) throws IOException {
         LOG.info(String.format("Template [%s] was deleted.", templateProject.getFullDisplayName()));
-        for (AbstractProject impl : property.getImplementations()) {
+        for (Job impl : property.getImplementations()) {
             LOG.info(String.format("Removing template from [%s].", impl.getFullDisplayName()));
             impl.removeProperty(TemplateImplementationProperty.class);
             ProjectUtils.silentSave(impl);
@@ -42,7 +45,7 @@ public class TemplateUtils {
 
     public static void handleTemplateRename(AbstractProject templateProject, TemplateProperty property, String oldFullName, String newFullName) throws IOException {
         LOG.info(String.format("Template [%s] was renamed. Updating implementations.", templateProject.getFullDisplayName()));
-        for (AbstractProject impl : TemplateProperty.getImplementations(oldFullName)) {
+        for (Job impl : property.getImplementations(oldFullName)) {
             LOG.info(String.format("Updating template in [%s].", impl.getFullDisplayName()));
             TemplateImplementationProperty implProperty = getTemplateImplementationProperty(impl);
             if (oldFullName.equals(implProperty.getTemplateJobName())) {
@@ -60,7 +63,7 @@ public class TemplateUtils {
         copy.addProperty(implProperty);
     }
 
-    public static void handleTemplateImplementationSaved(AbstractProject implementationProject, TemplateImplementationProperty property) throws IOException {
+    public static void handleTemplateImplementationSaved(Job implementationProject, TemplateImplementationProperty property) throws IOException {
         if (property.getTemplateJobName().equals("null")) {
             LOG.warning(String.format("Implementation [%s] but has no template selected.", implementationProject.getFullDisplayName()));
             return;
@@ -68,7 +71,7 @@ public class TemplateUtils {
 
         LOG.info(String.format("Implementation [%s] syncing with [%s].", implementationProject.getFullDisplayName(), property.getTemplateJobName()));
 
-        AbstractProject templateProject = property.findTemplate();
+        Job templateProject = property.findTemplate();
         if (templateProject == null) {
             // If the template can't be found, then it's probably a bug
             throw new IllegalStateException(String.format("Cannot find template [%s] used by implementation [%s]", property.getTemplateJobName(), implementationProject.getFullDisplayName()));
@@ -77,7 +80,7 @@ public class TemplateUtils {
         applyTemplate(implementationProject, templateProject, Exclusions.configuredExclusions(property));
     }
 
-    private static void applyTemplate(AbstractProject implementationProject, AbstractProject templateProject, Collection<Exclusion> exclusions) throws IOException {
+    private static void applyTemplate(Job implementationProject, Job templateProject, Collection<Exclusion> exclusions) throws IOException {
         // Capture values we want to keep
         for (Exclusion exclusion : exclusions) {
             try {
@@ -109,8 +112,8 @@ public class TemplateUtils {
     }
 
     @SuppressFBWarnings
-    private static AbstractProject cloneTemplate(AbstractProject implementationProject, AbstractProject templateProject) throws IOException {
-        AbstractProject cloned = synchronizeConfigFiles(implementationProject, templateProject);
+    private static Job cloneTemplate(Job implementationProject, Job templateProject) throws IOException {
+        Job cloned = synchronizeConfigFiles(implementationProject, templateProject);
         if (Jenkins.getInstance().getPlugin("promoted-builds") != null) {
             PromotedBuildsTemplateUtils.addPromotions(cloned, templateProject);
         }
@@ -118,7 +121,7 @@ public class TemplateUtils {
     }
 
     @SuppressFBWarnings
-    private static AbstractProject synchronizeConfigFiles(AbstractProject implementationProject, AbstractProject templateProject) throws IOException {
+    private static Job synchronizeConfigFiles(Job implementationProject, Job templateProject) throws IOException {
         File templateConfigFile = templateProject.getConfigFile().getFile();
         BufferedReader reader = new BufferedReader(new FileReader(templateConfigFile));
         try {
