@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.kohsuke.stapler.Ancestor;
 
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
@@ -42,10 +43,26 @@ public class JobsFacade {
         return AbstractProject.class.isAssignableFrom( jobType );
     }
 
+    public static List< Job > getAllTemplatableJobs() {
+        List< Job > jobs = new ArrayList<>();
+        jobs.addAll( getApplicableJobOperationsFor( AbstractProject.class, null ).getAllJobs() );
+        jobs.addAll( getApplicableJobOperationsFor( WorkflowJob.class, null ).getAllJobs() );
+        return jobs;
+    }
+
     public static List< Job > getAllJobs( Class< ? extends Job > jobType ) {
         List< Job > jobs = new ArrayList<>();
         jobs.addAll( getApplicableJobOperationsFor( jobType, null ).getAllJobs() );
         return jobs;
+    }
+
+    public static Ancestor findTemplatableAncestorFrom(Ancestor ancestor) {
+        Ancestor job = ancestor;
+        while (job != null && ( !(job.getObject() instanceof AbstractProject) ||
+                                !(job.getObject() instanceof WorkflowJob) ) ) {
+            job = job.getPrev();
+        }
+        return job;
     }
 
     public static Label getAssignedLabel( Job job ) {
