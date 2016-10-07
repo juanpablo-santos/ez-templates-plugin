@@ -28,7 +28,6 @@ class AbstractProjectProxy implements JobProxy {
 
     @Override
     public Label getAssignedLabel() {
-        // TODO Auto-generated method stub
         return job.getAssignedLabel();
     }
 
