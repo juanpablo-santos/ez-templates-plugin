@@ -1,7 +1,6 @@
 package com.joelj.jenkins.eztemplates.utils;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import com.joelj.jenkins.eztemplates.jobtypes.JobsFacade;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.XmlFile;
 import hudson.model.AbstractItem;
-import hudson.model.AbstractProject;
 import hudson.model.Items;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -38,30 +36,28 @@ public class ProjectUtils {
         List<Job> projects = JobsFacade.getAllJobs( jobType );
         return Collections2.filter(projects, new Predicate<Job>() {
             @Override
-            public boolean apply(@Nonnull Job abstractProject) {
-                return abstractProject.getProperty(property) != null;
+            public boolean apply(@Nonnull Job job) {
+                return job.getProperty(property) != null;
             }
         });
     }
 
-    public static AbstractProject findProject(StaplerRequest request) {
+    public static Job findProject(StaplerRequest request) {
         Ancestor ancestor = request.getAncestors().get(request.getAncestors().size() - 1);
-        while (ancestor != null && !(ancestor.getObject() instanceof AbstractProject)) {
-            ancestor = ancestor.getPrev();
-        }
+        ancestor = JobsFacade.findTemplatableAncestorFrom( ancestor );
         if (ancestor == null) {
             return null;
         }
-        return (AbstractProject) ancestor.getObject();
+        return (Job) ancestor.getObject();
     }
 
     /**
      * Get a project by its fullName (including any folder structure if present).
      */
     @SuppressFBWarnings
-    public static AbstractProject findProject(String fullName) {
-        List<AbstractProject> projects = Jenkins.getInstance().getAllItems(AbstractProject.class);
-        for (AbstractProject project : projects) {
+    public static Job findProject(String fullName) {
+        List<Job> projects = JobsFacade.getAllTemplatableJobs();
+        for (Job project : projects) {
             if (fullName.equals(project.getFullName())) {
                 return project;
             }
