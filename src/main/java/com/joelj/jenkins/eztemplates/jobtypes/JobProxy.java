@@ -10,7 +10,7 @@ import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 
 /**
- * Contract for proxy encapsulating different types of jobs. It's meant to enforce a set of commons operations, but it's not intended to
+ * Contract for proxies encapsulating different types of jobs. It's meant to enforce a set of commons operations, but it's not intended to
  * be used outside of this package.
  *
  * @author Juan Pablo Santos Rodríguez

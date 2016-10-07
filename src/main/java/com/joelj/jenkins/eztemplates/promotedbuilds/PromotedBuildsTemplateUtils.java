@@ -22,11 +22,12 @@ public class PromotedBuildsTemplateUtils {
      * Adds all the promotions from the template project into the implementation one. All existing promotions from the
      * implementation project are lost.
      *
-     * @param implementationProject
-     * @param templateProject
+     * @param implementationJob
+     * @param templateJob
      * @throws IOException
      */
     public static void addPromotions(Job implementationJob, Job templateJob) throws IOException {
+        // promoted builds plugin only applies to AbstractProjects so we should ensure we only work with them
         if(AbstractProject.class.isAssignableFrom( implementationJob.getClass() ) && AbstractProject.class.isAssignableFrom( templateJob.getClass() ) ) {
             AbstractProject implementationProject = (AbstractProject)implementationJob;
             AbstractProject templateProject = (AbstractProject)templateJob;
