@@ -2,9 +2,10 @@ package com.joelj.jenkins.eztemplates;
 
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.utils.TemplateUtils;
+
 import hudson.Extension;
-import hudson.model.AbstractProject;
 import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.listeners.ItemListener;
 
 /**
@@ -18,7 +19,7 @@ public class TemplateProjectListener extends ItemListener {
         TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
-                TemplateUtils.handleTemplateSaved((AbstractProject) item, property);
+                TemplateUtils.handleTemplateSaved((Job) item, property);
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
@@ -30,7 +31,7 @@ public class TemplateProjectListener extends ItemListener {
         TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
-                TemplateUtils.handleTemplateDeleted((AbstractProject) item, property);
+                TemplateUtils.handleTemplateDeleted((Job) item, property);
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
@@ -42,7 +43,7 @@ public class TemplateProjectListener extends ItemListener {
         TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
-                TemplateUtils.handleTemplateRename((AbstractProject) item, property, oldFullName, newFullName);
+                TemplateUtils.handleTemplateRename((Job) item, property, oldFullName, newFullName);
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
@@ -54,7 +55,7 @@ public class TemplateProjectListener extends ItemListener {
         TemplateProperty property = TemplateUtils.getTemplateProperty(item);
         if (property != null) {
             try {
-                TemplateUtils.handleTemplateCopied((AbstractProject) item, (AbstractProject) src);
+                TemplateUtils.handleTemplateCopied((Job) item, (Job) src);
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
