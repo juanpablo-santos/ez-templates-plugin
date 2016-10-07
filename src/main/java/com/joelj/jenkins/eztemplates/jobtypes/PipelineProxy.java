@@ -39,13 +39,13 @@ class PipelineProxy implements JobProxy {
 
     @Override
     public boolean isDisabled() {
-        // JENKINS-27299: workflows can't currently be disabled
+        // JENKINS-27299: workflows can't currently be disabled, return false.
         return false;
     }
 
     @Override
     public void propagateDisabled( boolean disabled ) {
-     // JENKINS-27299: workflows can't currently be disabled, we do nothing
+        // JENKINS-27299: workflows can't currently be disabled, we do nothing.
     }
 
     @Override
