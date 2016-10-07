@@ -19,7 +19,6 @@ import com.joelj.jenkins.eztemplates.exclusion.HardCodedExclusion;
 import com.joelj.jenkins.eztemplates.promotedbuilds.PromotedBuildsTemplateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Job;
 import jenkins.model.Jenkins;
@@ -27,14 +26,14 @@ import jenkins.model.Jenkins;
 public class TemplateUtils {
     private static final Logger LOG = Logger.getLogger("ez-templates");
 
-    public static void handleTemplateSaved(AbstractProject templateProject, TemplateProperty property) throws IOException {
+    public static void handleTemplateSaved(Job templateProject, TemplateProperty property) throws IOException {
         LOG.info(String.format("Template [%s] was saved. Syncing implementations.", templateProject.getFullDisplayName()));
         for (Job impl : property.getImplementations()) {
             handleTemplateImplementationSaved(impl, getTemplateImplementationProperty(impl)); // ? continue on exception
         }
     }
 
-    public static void handleTemplateDeleted(AbstractProject templateProject, TemplateProperty property) throws IOException {
+    public static void handleTemplateDeleted(Job templateProject, TemplateProperty property) throws IOException {
         LOG.info(String.format("Template [%s] was deleted.", templateProject.getFullDisplayName()));
         for (Job impl : property.getImplementations()) {
             LOG.info(String.format("Removing template from [%s].", impl.getFullDisplayName()));
@@ -43,7 +42,7 @@ public class TemplateUtils {
         }
     }
 
-    public static void handleTemplateRename(AbstractProject templateProject, TemplateProperty property, String oldFullName, String newFullName) throws IOException {
+    public static void handleTemplateRename(Job templateProject, TemplateProperty property, String oldFullName, String newFullName) throws IOException {
         LOG.info(String.format("Template [%s] was renamed. Updating implementations.", templateProject.getFullDisplayName()));
         for (Job impl : property.getImplementations(oldFullName)) {
             LOG.info(String.format("Updating template in [%s].", impl.getFullDisplayName()));
@@ -55,7 +54,7 @@ public class TemplateUtils {
         }
     }
 
-    public static void handleTemplateCopied(AbstractProject copy, AbstractProject original) throws IOException {
+    public static void handleTemplateCopied(Job copy, Job original) throws IOException {
         LOG.info(String.format("Template [%s] was copied to [%s]. Forcing new project to be an implementation of the original.", original.getFullDisplayName(), copy.getFullDisplayName()));
         copy.removeProperty(TemplateProperty.class);
         copy.removeProperty(TemplateImplementationProperty.class);
@@ -138,8 +137,8 @@ public class TemplateUtils {
      * @return null if this is not a template implementation project
      */
     public static TemplateImplementationProperty getTemplateImplementationProperty(Item item) {
-        if (item instanceof AbstractProject) {
-            return (TemplateImplementationProperty) ((AbstractProject) item).getProperty(TemplateImplementationProperty.class);
+        if (item instanceof Job) {
+            return (TemplateImplementationProperty) ((Job) item).getProperty(TemplateImplementationProperty.class);
         }
         return null;
     }
@@ -149,8 +148,8 @@ public class TemplateUtils {
      * @return null if this is not a template project
      */
     public static TemplateProperty getTemplateProperty(Item item) {
-        if (item instanceof AbstractProject) {
-            return (TemplateProperty) ((AbstractProject) item).getProperty(TemplateProperty.class);
+        if (item instanceof Job) {
+            return (TemplateProperty) ((Job) item).getProperty(TemplateProperty.class);
         }
         return null;
     }
