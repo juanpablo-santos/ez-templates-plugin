@@ -33,9 +33,8 @@ class AbstractProjectProxy implements JobProxy {
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
-    public List< ? extends Job< ?, ? > > getAllJobs() {
-        return (List< ? extends Job< ?, ? > >)Jenkins.getInstance().getAllItems( AbstractProject.class );
+    public List< ? extends Job > getAllJobs() {
+        return (List< ? extends Job >)Jenkins.getInstance().getAllItems( AbstractProject.class );
     }
 
     @Override

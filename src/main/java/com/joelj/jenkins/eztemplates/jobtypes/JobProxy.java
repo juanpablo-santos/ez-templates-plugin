@@ -17,7 +17,7 @@ import hudson.triggers.TriggerDescriptor;
  */
 interface JobProxy {
 
-    List< ? extends Job< ?, ? > > getAllJobs();
+    List< ? extends Job > getAllJobs();
 
     Label getAssignedLabel();
 

@@ -23,8 +23,8 @@ class PipelineProxy implements JobProxy {
     }
 
     @Override
-    public List< ? extends Job< ?, ? > > getAllJobs() {
-        return (List< ? extends Job< ?, ? > >)Jenkins.getInstance().getAllItems( WorkflowJob.class );
+    public List< ? extends Job > getAllJobs() {
+        return (List< ? extends Job >)Jenkins.getInstance().getAllItems( WorkflowJob.class );
     }
 
     @Override
