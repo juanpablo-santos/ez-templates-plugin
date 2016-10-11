@@ -30,7 +30,6 @@ import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 public class TemplateImplementationProperty extends JobProperty<Job<?, ?>> {
