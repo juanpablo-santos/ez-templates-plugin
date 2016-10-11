@@ -16,11 +16,6 @@
     Allows you to use any job as a template for another job with overridable parameters
   </description>
 
-  <properties>
-    <jenkins.version>2.19.1</jenkins.version>
-    <java.level>7</java.level>
-  </properties>
-
   <developers>
     <developer>
       <id>drekbour</id>
