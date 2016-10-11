@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Job;
 import hudson.model.Label;
 import hudson.scm.SCM;
@@ -14,6 +15,7 @@ import hudson.triggers.TriggerDescriptor;
 import jenkins.model.Jenkins;
 
 
+@SuppressFBWarnings( justification="Possible NPEs are handled by callers" )
 class PipelineProxy implements JobProxy {
 
     private WorkflowJob job;

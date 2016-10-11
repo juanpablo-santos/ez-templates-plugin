@@ -9,6 +9,7 @@ import java.util.Map;
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.Label;
@@ -18,6 +19,7 @@ import hudson.triggers.TriggerDescriptor;
 import jenkins.model.Jenkins;
 
 
+@SuppressFBWarnings( justification="Possible NPEs are handled by callers" )
 class AbstractProjectProxy implements JobProxy {
 
     private AbstractProject< ?, ? > job;
