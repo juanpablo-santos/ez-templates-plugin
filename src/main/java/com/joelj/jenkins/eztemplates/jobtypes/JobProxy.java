@@ -16,14 +16,14 @@ import hudson.triggers.TriggerDescriptor;
  *
  * @author Juan Pablo Santos Rodríguez
  */
-interface JobProxy {
+interface JobProxy< T extends Job > {
 
     /**
      * get all jobs of a given type.
      *
      * @return all jobs of a given type.
      */
-    List< ? extends Job > getAllJobs();
+    List< T > getAllJobs();
 
     /**
      * get the assigned label on which the job should run.

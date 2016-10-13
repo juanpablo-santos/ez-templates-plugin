@@ -20,7 +20,7 @@ import jenkins.model.Jenkins;
 
 
 @SuppressFBWarnings( justification="Possible NPEs are handled by callers" )
-class AbstractProjectProxy implements JobProxy {
+class AbstractProjectProxy implements JobProxy<AbstractProject> {
 
     private AbstractProject< ?, ? > job;
 
@@ -44,8 +44,8 @@ class AbstractProjectProxy implements JobProxy {
      * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getAllJobs()
      */
     @Override
-    public List< ? extends Job > getAllJobs() {
-        return (List< ? extends Job >)Jenkins.getInstance().getAllItems( AbstractProject.class );
+    public List< AbstractProject > getAllJobs() {
+        return Jenkins.getInstance().getAllItems( AbstractProject.class );
     }
 
     /**

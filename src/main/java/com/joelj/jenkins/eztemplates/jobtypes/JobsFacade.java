@@ -93,15 +93,15 @@ public class JobsFacade {
         return getApplicableJobOperationsFor( job ).getTriggers();
     }
 
-    public static List< Trigger<?>> getTriggersToReplace( Job job ) {
+    public static List<Trigger<?>> getTriggersToReplace( Job job ) {
         return getApplicableJobOperationsFor( job ).getTriggersToReplace();
     }
 
-    static JobProxy getApplicableJobOperationsFor( Job< ?, ? > job ) {
+    static JobProxy<? extends Job> getApplicableJobOperationsFor( Job< ?, ? > job ) {
         return getApplicableJobOperationsFor( job.getClass(), job );
     }
 
-    static JobProxy getApplicableJobOperationsFor( Class< ? extends Job > jobType, Job< ?, ? > job ) {
+    static JobProxy<? extends Job> getApplicableJobOperationsFor( Class<? extends Job> jobType, Job<?, ?> job ) {
         if( pipelinesPluginEnabled &&  WorkflowJob.class.isAssignableFrom( jobType ) ) {
             return new PipelineProxy( (WorkflowJob)job );
         } else if( AbstractProject.class.isAssignableFrom( jobType ) ) {

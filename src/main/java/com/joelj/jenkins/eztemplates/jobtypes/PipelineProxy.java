@@ -7,7 +7,6 @@ import java.util.Map;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.model.Job;
 import hudson.model.Label;
 import hudson.scm.SCM;
 import hudson.triggers.Trigger;
@@ -16,7 +15,7 @@ import jenkins.model.Jenkins;
 
 
 @SuppressFBWarnings( justification="Possible NPEs are handled by callers" )
-class PipelineProxy implements JobProxy {
+class PipelineProxy implements JobProxy<WorkflowJob> {
 
     private WorkflowJob job;
 
@@ -30,8 +29,8 @@ class PipelineProxy implements JobProxy {
      * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getAllJobs()
      */
     @Override
-    public List< ? extends Job > getAllJobs() {
-        return (List< ? extends Job >)Jenkins.getInstance().getAllItems( WorkflowJob.class );
+    public List< WorkflowJob > getAllJobs() {
+        return Jenkins.getInstance().getAllItems( WorkflowJob.class );
     }
 
     /**
