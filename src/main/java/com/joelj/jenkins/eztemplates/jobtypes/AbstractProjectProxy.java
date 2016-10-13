@@ -28,16 +28,31 @@ class AbstractProjectProxy implements JobProxy {
         this.job = job;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getAssignedLabel()
+     */
     @Override
     public Label getAssignedLabel() {
         return job.getAssignedLabel();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getAllJobs()
+     */
     @Override
     public List< ? extends Job > getAllJobs() {
         return (List< ? extends Job >)Jenkins.getInstance().getAllItems( AbstractProject.class );
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#setAssignedLabel(hudson.model.Label)
+     */
     @Override
     public void setAssignedLabel( Label label ) {
         try {
@@ -47,21 +62,41 @@ class AbstractProjectProxy implements JobProxy {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#isDisabled()
+     */
     @Override
     public boolean isDisabled() {
         return job.isDisabled();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#propagateDisabled(boolean)
+     */
     @Override
     public void propagateDisabled( boolean disabled ) {
         EzReflectionUtils.setFieldValue(AbstractProject.class, job, "disabled", disabled);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getScm()
+     */
     @Override
     public SCM getScm() {
         return job.getScm();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#setScm(hudson.scm.SCM)
+     */
     @Override
     public void setScm( SCM scm ) {
         try {
@@ -71,6 +106,11 @@ class AbstractProjectProxy implements JobProxy {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getTriggers()
+     */
     @Override
     public Map< TriggerDescriptor, Trigger > getTriggers() {
         Map< TriggerDescriptor, Trigger > triggers = new HashMap<>();
@@ -78,6 +118,11 @@ class AbstractProjectProxy implements JobProxy {
         return triggers;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getTriggersToReplace()
+     */
     @Override
     public List< Trigger< ? > > getTriggersToReplace() {
         try {

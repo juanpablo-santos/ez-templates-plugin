@@ -24,32 +24,62 @@ class PipelineProxy implements JobProxy {
         this.job = job;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getAllJobs()
+     */
     @Override
     public List< ? extends Job > getAllJobs() {
         return (List< ? extends Job >)Jenkins.getInstance().getAllItems( WorkflowJob.class );
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getAssignedLabel()
+     */
     @Override
     public Label getAssignedLabel() {
         return job.getAssignedLabel();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#setAssignedLabel(hudson.model.Label)
+     */
     @Override
     public void setAssignedLabel( Label label ) {
         // the label where the job is going to be run on is defined on the pipeline itself, we do nothing.
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#isDisabled()
+     */
     @Override
     public boolean isDisabled() {
         // JENKINS-27299: workflows can't currently be disabled, return false.
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#propagateDisabled(boolean)
+     */
     @Override
     public void propagateDisabled( boolean disabled ) {
         // JENKINS-27299: workflows can't currently be disabled, we do nothing.
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getScm()
+     */
     @Override
     public SCM getScm() {
         // SCM to poll is defined on the pipeline itself (in fact, you can have several SCMs to poll), so we do nothing.
@@ -57,12 +87,22 @@ class PipelineProxy implements JobProxy {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#setScm(hudson.scm.SCM)
+     */
     @Override
     public void setScm( SCM scm ) {
         // SCM to poll is defined on the pipeline itself (in fact, you can have several SCMs to poll), so we do nothing.
         // See http://stackoverflow.com/a/31148178
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getTriggers()
+     */
     @Override
     public Map< TriggerDescriptor, Trigger > getTriggers() {
         Map< TriggerDescriptor, Trigger > triggers = new HashMap<>();
@@ -70,6 +110,11 @@ class PipelineProxy implements JobProxy {
         return triggers;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see com.joelj.jenkins.eztemplates.jobtypes.JobProxy#getTriggersToReplace()
+     */
     @Override
     public List< Trigger< ? > > getTriggersToReplace() {
         return job.getTriggersJobProperty().getTriggers();
