@@ -53,6 +53,8 @@ public class ProjectUtils {
 
     /**
      * Get a project by its fullName (including any folder structure if present).
+     * @param fullName full name of the project
+     * @return project identified by the full name or {@code null} if not found
      */
     @SuppressFBWarnings
     public static Job findProject(String fullName) {
@@ -68,6 +70,8 @@ public class ProjectUtils {
     /**
      * Silently saves the project without triggering any save events.
      * Use this method to save a project from within an Update event handler.
+     * @param project project to be saved
+     * @throws IOException if unable to save the project
      */
     public static void silentSave(Job project) throws IOException {
         project.getConfigFile().write(project);
@@ -76,6 +80,11 @@ public class ProjectUtils {
     /**
      * Copied from 1.580.3 {@link AbstractItem#updateByXml(javax.xml.transform.Source)}, removing the save event and
      * returning the project after the update.
+     *
+     * @param project project to persist
+     * @param source configuration to be persisted
+     * @return project as returned by {@link #findProject(String)}
+     * @throws IOException if unable to persist the project
      */
     @SuppressWarnings("unchecked")
     @SuppressFBWarnings

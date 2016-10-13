@@ -58,6 +58,8 @@ public class Exclusions {
 
     /**
      * Exclusions relevant to the given implementation
+     * @param property template implementation
+     * @return Exclusions relevant to the given implementation
      */
     public static Collection<Exclusion> configuredExclusions(TemplateImplementationProperty property) {
         return Lists.newArrayList(Collections2.transform(

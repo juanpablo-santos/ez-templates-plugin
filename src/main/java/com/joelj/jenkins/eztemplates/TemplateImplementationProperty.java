@@ -155,6 +155,7 @@ public class TemplateImplementationProperty extends JobProperty<Job<?, ?>> {
 
         /**
          * Jenkins-convention to populate the drop-down box with discovered templates
+         * @return populated data to fill the drop-down box with discovered templates
          */
         public ListBoxModel doFillTemplateJobNameItems() {
             ListBoxModel items = new ListBoxModel();

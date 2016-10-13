@@ -22,9 +22,9 @@ public class PromotedBuildsTemplateUtils {
      * Adds all the promotions from the template project into the implementation one. All existing promotions from the
      * implementation project are lost.
      *
-     * @param implementationJob
-     * @param templateJob
-     * @throws IOException
+     * @param implementationJob implementation job
+     * @param templateJob template job
+     * @throws IOException error processing promotions
      */
     public static void addPromotions(Job implementationJob, Job templateJob) throws IOException {
         // promoted builds plugin only applies to AbstractProjects so we should ensure we only work with them
