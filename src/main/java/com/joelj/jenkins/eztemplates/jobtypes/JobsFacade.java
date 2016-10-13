@@ -22,7 +22,7 @@ import hudson.triggers.TriggerDescriptor;
  * Facade to encapsulate the access to different types of Jenkins Jobs. Should be used when direct use of Job isn't possible and you have
  * to deal with concrete implementations of Jobs.
  *
- * @see https://github.com/jenkinsci/pipeline-plugin/blob/master/DEVGUIDE.md#historical-background
+ * @see pipeline's <a href="https://github.com/jenkinsci/pipeline-plugin/blob/master/DEVGUIDE.md#historical-background">DEVGUIDE.md#historical-background</a>
  * @author Juan Pablo Santos Rodríguez
  */
 public class JobsFacade {
