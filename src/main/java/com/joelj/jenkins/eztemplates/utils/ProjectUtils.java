@@ -57,7 +57,7 @@ public class ProjectUtils {
     public static AbstractProject findProject(String fullName) {
         List<AbstractProject> projects = Jenkins.getInstance().getAllItems(AbstractProject.class);
         for (AbstractProject project : projects) {
-            if (fullName.equals(project.getFullName())) {
+            if (project.getFullName().equals(fullName)) {
                 return project;
             }
         }
