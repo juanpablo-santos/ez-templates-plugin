@@ -1,9 +1,7 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.joelj.jenkins.eztemplates.TemplateImplementationProperty;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -16,7 +14,7 @@ import static org.mockito.Mockito.when;
 public class ExclusionsTest {
 
     @Test
-    public void providesCorrectExclusions() {
+    public void provides_correct_exclusions() {
         // Given:
         TemplateImplementationProperty property = mock(TemplateImplementationProperty.class);
         when(property.getExclusions()).thenReturn(ImmutableList.of("ownership", "scm", "ez-templates"));
@@ -24,14 +22,14 @@ public class ExclusionsTest {
         Collection<Exclusion> exclusions = Exclusions.configuredExclusions(property);
         // Then:
         assertThat(exclusions, containsInAnyOrder(
-                hasProperty("id",equalTo("ownership")),
-                hasProperty("id",equalTo("scm")),
-                hasProperty("id",equalTo("ez-templates"))
+                hasProperty("id", equalTo("ownership")),
+                hasProperty("id", equalTo("scm")),
+                hasProperty("id", equalTo("ez-templates"))
         ));
     }
 
     @Test
-    public void providesUniqueExclusions() {
+    public void provides_unique_exclusions() {
         // Given:
         TemplateImplementationProperty property = mock(TemplateImplementationProperty.class);
         when(property.getExclusions()).thenReturn(ImmutableList.of("ownership"));
