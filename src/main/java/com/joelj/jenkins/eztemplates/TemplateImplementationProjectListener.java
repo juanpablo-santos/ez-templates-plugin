@@ -1,28 +1,22 @@
 package com.joelj.jenkins.eztemplates;
 
-import com.google.common.base.Throwables;
+import com.joelj.jenkins.eztemplates.utils.PropertyListener;
 import com.joelj.jenkins.eztemplates.utils.TemplateUtils;
 import hudson.Extension;
 import hudson.model.AbstractProject;
-import hudson.model.Item;
-import hudson.model.listeners.ItemListener;
+import hudson.model.Job;
+
+import java.io.IOException;
 
 /**
  * React to changes being made on template implementation projects
  */
 @Extension
-public class TemplateImplementationProjectListener extends ItemListener {
+public class TemplateImplementationProjectListener extends PropertyListener<TemplateImplementationProperty> {
 
     @Override
-    public void onUpdated(Item item) {
-        TemplateImplementationProperty property = TemplateUtils.getTemplateImplementationProperty(item);
-        if (property != null) {
-            try {
-                TemplateUtils.handleTemplateImplementationSaved((AbstractProject) item, property);
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
-        }
+    public void onUpdatedProperty(Job item, TemplateImplementationProperty property) throws IOException {
+        TemplateUtils.handleTemplateImplementationSaved((AbstractProject) item, property);
     }
 
 }
