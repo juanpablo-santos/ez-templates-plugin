@@ -132,6 +132,10 @@ public class TemplateUtils {
         return implementationProject;
     }
 
+    /**
+     * @param item A job of some kind
+     * @return null if this is not a template implementation project
+     */
     private static TemplateImplementationProperty getTemplateImplementationProperty(Item item) {
         return PropertyListener.getProperty(item, TemplateImplementationProperty.class);
     }

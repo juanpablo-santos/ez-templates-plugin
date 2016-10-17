@@ -8,6 +8,7 @@ import com.joelj.jenkins.eztemplates.utils.TemplateUtils;
 import hudson.Extension;
 import hudson.model.Job;
 
+
 /**
  * React to changes being made on template implementation projects
  */

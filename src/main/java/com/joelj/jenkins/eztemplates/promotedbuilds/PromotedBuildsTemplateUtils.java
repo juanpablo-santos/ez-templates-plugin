@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
+
 import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
@@ -28,36 +30,45 @@ public class PromotedBuildsTemplateUtils {
      */
     public static void addPromotions(Job implementationJob, Job templateJob) throws IOException {
         // promoted builds plugin only applies to AbstractProjects so we should ensure we only work with them
-        if(AbstractProject.class.isAssignableFrom( implementationJob.getClass() ) && AbstractProject.class.isAssignableFrom( templateJob.getClass() ) ) {
+        if(jobsAreAssignableToAbstractProject(implementationJob, templateJob)) {
             AbstractProject implementationProject = (AbstractProject)implementationJob;
             AbstractProject templateProject = (AbstractProject)templateJob;
             JobPropertyImpl promotions = (JobPropertyImpl) implementationProject.getProperty(JobPropertyImpl.class);
             if (promotions != null) {
-                LOG.info(String.format("Merging [%s].", promotions.getFullDisplayName()));
-
-                // remove existing promotions on implementationProject, if any
-                implementationProject.removeProperty(JobPropertyImpl.class);
-                Util.deleteRecursive(new File(implementationProject.getRootDir(), "promotions"));
-                promotions.getItems().clear();
-
-                // obtain templateProject promotions. Each promotion is stored under a different folder under $JOB/promotions
-                File templatePromotions = new File(templateProject.getRootDir(), "promotions");
-                String[] list = templatePromotions.list();
-                if (list != null) {
-                    for (String promotionDir : list) {
-                        File templatePromotionProcess = new File(templatePromotions, promotionDir);
-                        // JENKINS-38695 Don't clone .svn or .git directories, only ones that look like real promotions
-                        if (templatePromotionProcess.isDirectory() && new File(templatePromotionProcess, "config.xml").exists()) {
-                            // for each promotion, create a process from its configuration
-                            promotions.createProcessFromXml(promotionDir, new FileInputStream(new File(templatePromotionProcess, "config.xml")));
-                        }
-                    }
-                }
-
-                // update implementationProject with the resulting promotions
-                implementationProject.addProperty(promotions);
+                mergePromotions( implementationProject, templateProject, promotions );
             }
         }
+    }
+
+    private static boolean jobsAreAssignableToAbstractProject(Job implementationJob, Job templateJob) {
+        return EzReflectionUtils.isAssignable("hudson.model.AbstractProject", implementationJob.getClass()) &&
+               EzReflectionUtils.isAssignable("hudson.model.AbstractProject", templateJob.getClass());
+    }
+
+    private static void mergePromotions(AbstractProject implementationProject, AbstractProject templateProject, JobPropertyImpl promotions) throws IOException {
+        LOG.info(String.format("Merging [%s].", promotions.getFullDisplayName()));
+
+        // remove existing promotions on implementationProject, if any
+        implementationProject.removeProperty(JobPropertyImpl.class);
+        Util.deleteRecursive(new File(implementationProject.getRootDir(), "promotions"));
+        promotions.getItems().clear();
+
+        // obtain templateProject promotions. Each promotion is stored under a different folder under $JOB/promotions
+        File templatePromotions = new File(templateProject.getRootDir(), "promotions");
+        String[] list = templatePromotions.list();
+        if (list != null) {
+            for (String promotionDir : list) {
+                File templatePromotionProcess = new File(templatePromotions, promotionDir);
+                // JENKINS-38695 Don't clone .svn or .git directories, only ones that look like real promotions
+                if (templatePromotionProcess.isDirectory() && new File(templatePromotionProcess, "config.xml").exists()) {
+                    // for each promotion, create a process from its configuration
+                    promotions.createProcessFromXml(promotionDir, new FileInputStream(new File(templatePromotionProcess, "config.xml")));
+                }
+            }
+        }
+
+        // update implementationProject with the resulting promotions
+        implementationProject.addProperty(promotions);
     }
 
 }
