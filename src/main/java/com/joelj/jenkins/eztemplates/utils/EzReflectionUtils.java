@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import hudson.model.Job;
+
 import static org.springframework.util.ReflectionUtils.*;
 
 public class EzReflectionUtils {
@@ -20,6 +22,16 @@ public class EzReflectionUtils {
         Field f = findField(c,name);
         makeAccessible(f);
         setField(f, instance, value);
+    }
+
+    public static boolean isAssignable( String className, Class< ? extends Job > jobType ) {
+        Class< ? > assignable;
+        try {
+            assignable = Class.forName( className );
+        } catch( ClassNotFoundException e ) {
+            throw new UnsupportedOperationException( e.getMessage(), e );
+        }
+        return assignable.isAssignableFrom( jobType );
     }
 
 }

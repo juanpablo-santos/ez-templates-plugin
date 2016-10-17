@@ -9,6 +9,7 @@ import org.kohsuke.stapler.Ancestor;
 
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
+import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 
 import hudson.model.AbstractProject;
 import hudson.model.Job;
@@ -27,7 +28,9 @@ import hudson.triggers.TriggerDescriptor;
  */
 public class JobsFacade {
 
-    private static boolean pipelinesPluginEnabled = Exclusions.checkPlugin("workflow-job") == null;
+    private static boolean isPipelinesPluginEnabled() {
+        return Exclusions.checkPlugin("workflow-job") == null;
+    }
 
     /**
      * Verifies if the the plugin applies to the Jenkins job type.
@@ -36,11 +39,11 @@ public class JobsFacade {
      * @return {@code true} if it is either an {@link AbstractProject} or a {@link WorkflowJob}.
      */
     public static boolean isPluginApplicableTo( Class< ? extends Job > jobType ) {
-        if( pipelinesPluginEnabled ) {
-            return AbstractProject.class.isAssignableFrom( jobType )
-                || WorkflowJob.class.isAssignableFrom( jobType );
+        if( isPipelinesPluginEnabled() ) {
+            return EzReflectionUtils.isAssignable( "hudson.model.AbstractProject", jobType )
+                || EzReflectionUtils.isAssignable( "org.jenkinsci.plugins.workflow.job.WorkflowJob", jobType );
         }
-        return AbstractProject.class.isAssignableFrom( jobType );
+        return EzReflectionUtils.isAssignable( "hudson.model.AbstractProject", jobType );
     }
 
     public static List< Job > getAllTemplatableJobs() {
@@ -102,7 +105,7 @@ public class JobsFacade {
     }
 
     static JobProxy<? extends Job> getApplicableJobOperationsFor( Class<? extends Job> jobType, Job<?, ?> job ) {
-        if( pipelinesPluginEnabled &&  WorkflowJob.class.isAssignableFrom( jobType ) ) {
+        if( isPipelinesPluginEnabled() &&  WorkflowJob.class.isAssignableFrom( jobType ) ) {
             return new PipelineProxy( (WorkflowJob)job );
         } else if( AbstractProject.class.isAssignableFrom( jobType ) ) {
             return new AbstractProjectProxy( (AbstractProject<?,?>)job );
