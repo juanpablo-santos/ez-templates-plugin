@@ -37,7 +37,7 @@ public class JobsFacade {
      * Verifies if the the plugin applies to the Jenkins job type.
      *
      * @param jobType Jenkins job type.
-     * @return {@code true} if it is either an {@value #AbstractProject} or a {@value WorkflowJob}.
+     * @return {@code true} if it is either an {@value #ABSTRACT_PROJECT_CLASS} or a {@value #WORKFLOW_JOB_CLASS}.
      */
     public static boolean isPluginApplicableTo( Class< ? extends Job > jobType ) {
         if( isPipelinesPluginEnabled() ) {
