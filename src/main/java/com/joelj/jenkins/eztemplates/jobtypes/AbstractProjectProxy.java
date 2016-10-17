@@ -11,6 +11,7 @@ import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Label;
 import hudson.scm.SCM;
 import hudson.triggers.Trigger;
@@ -23,8 +24,8 @@ class AbstractProjectProxy implements JobProxy<AbstractProject> {
 
     private AbstractProject< ?, ? > job;
 
-    public AbstractProjectProxy( AbstractProject< ?, ? > job ) {
-        this.job = job;
+    public AbstractProjectProxy( Job< ?, ? > job ) {
+        this.job = (AbstractProject<?,?>)job;
     }
 
     /**

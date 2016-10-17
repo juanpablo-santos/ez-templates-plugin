@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.Ancestor;
 
 import com.google.common.base.Throwables;
 import com.joelj.jenkins.eztemplates.exclusion.Exclusions;
 import com.joelj.jenkins.eztemplates.utils.EzReflectionUtils;
 
-import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.Label;
 import hudson.scm.SCM;
@@ -28,6 +26,9 @@ import hudson.triggers.TriggerDescriptor;
  */
 public class JobsFacade {
 
+    private static final String ABSTRACT_PROJECT_CLASS = "hudson.model.AbstractProject";
+    private static final String WORKFLOW_JOB_CLASS = "org.jenkinsci.plugins.workflow.job.WorkflowJob";
+
     private static boolean isPipelinesPluginEnabled() {
         return Exclusions.checkPlugin("workflow-job") == null;
     }
@@ -36,33 +37,33 @@ public class JobsFacade {
      * Verifies if the the plugin applies to the Jenkins job type.
      *
      * @param jobType Jenkins job type.
-     * @return {@code true} if it is either an {@link AbstractProject} or a {@link WorkflowJob}.
+     * @return {@code true} if it is either an {@value #AbstractProject} or a {@value WorkflowJob}.
      */
     public static boolean isPluginApplicableTo( Class< ? extends Job > jobType ) {
         if( isPipelinesPluginEnabled() ) {
-            return EzReflectionUtils.isAssignable( "hudson.model.AbstractProject", jobType )
-                || EzReflectionUtils.isAssignable( "org.jenkinsci.plugins.workflow.job.WorkflowJob", jobType );
+            return EzReflectionUtils.isAssignable( ABSTRACT_PROJECT_CLASS, jobType )
+                || EzReflectionUtils.isAssignable( WORKFLOW_JOB_CLASS, jobType );
         }
-        return EzReflectionUtils.isAssignable( "hudson.model.AbstractProject", jobType );
+        return EzReflectionUtils.isAssignable( ABSTRACT_PROJECT_CLASS, jobType );
     }
 
     public static List< Job > getAllTemplatableJobs() {
         List< Job > jobs = new ArrayList<>();
-        jobs.addAll( getApplicableJobOperationsFor( AbstractProject.class, null ).getAllJobs() );
-        jobs.addAll( getApplicableJobOperationsFor( WorkflowJob.class, null ).getAllJobs() );
+        jobs.addAll( getApplicableJobOperationsFor( ABSTRACT_PROJECT_CLASS, null ).getAllJobs() );
+        jobs.addAll( getApplicableJobOperationsFor( WORKFLOW_JOB_CLASS, null ).getAllJobs() );
         return jobs;
     }
 
     public static List< Job > getAllJobs( Class< ? extends Job > jobType ) {
         List< Job > jobs = new ArrayList<>();
-        jobs.addAll( getApplicableJobOperationsFor( jobType, null ).getAllJobs() );
+        jobs.addAll( getApplicableJobOperationsFor( jobType.getName(), null ).getAllJobs() );
         return jobs;
     }
 
     public static Ancestor findTemplatableAncestorFrom(Ancestor ancestor) {
         Ancestor job = ancestor;
-        while (job != null && ( !(job.getObject() instanceof AbstractProject) ||
-                                !(job.getObject() instanceof WorkflowJob) ) ) {
+        while (job != null && ( !(EzReflectionUtils.isInstanceOf( ABSTRACT_PROJECT_CLASS, job.getObject() )) ||
+                                !(EzReflectionUtils.isInstanceOf( WORKFLOW_JOB_CLASS, job.getObject() )) ) ) {
             job = job.getPrev();
         }
         return job;
@@ -101,14 +102,14 @@ public class JobsFacade {
     }
 
     static JobProxy<? extends Job> getApplicableJobOperationsFor( Job< ?, ? > job ) {
-        return getApplicableJobOperationsFor( job.getClass(), job );
+        return getApplicableJobOperationsFor( job.getClass().getName(), job );
     }
 
-    static JobProxy<? extends Job> getApplicableJobOperationsFor( Class<? extends Job> jobType, Job<?, ?> job ) {
-        if( isPipelinesPluginEnabled() &&  WorkflowJob.class.isAssignableFrom( jobType ) ) {
-            return new PipelineProxy( (WorkflowJob)job );
-        } else if( AbstractProject.class.isAssignableFrom( jobType ) ) {
-            return new AbstractProjectProxy( (AbstractProject<?,?>)job );
+    static JobProxy<? extends Job> getApplicableJobOperationsFor( String jobType, Job<?, ?> job ) {
+        if( isPipelinesPluginEnabled() && EzReflectionUtils.isAssignable( WORKFLOW_JOB_CLASS, jobType ) ) {
+            return new PipelineProxy( job );
+        } else if( EzReflectionUtils.isAssignable( ABSTRACT_PROJECT_CLASS, jobType ) ) {
+            return new AbstractProjectProxy( job );
         }
         throw Throwables.propagate( new UnsupportedOperationException( "Need a pipeline or a job extending AbstractProject" ) );
     }

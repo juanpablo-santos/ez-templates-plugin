@@ -7,6 +7,7 @@ import java.util.Map;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.model.Job;
 import hudson.model.Label;
 import hudson.scm.SCM;
 import hudson.triggers.Trigger;
@@ -19,8 +20,8 @@ class PipelineProxy implements JobProxy<WorkflowJob> {
 
     private WorkflowJob job;
 
-    public PipelineProxy( WorkflowJob job ) {
-        this.job = job;
+    public PipelineProxy( Job<?, ?> job ) {
+        this.job = (WorkflowJob)job;
     }
 
     /**
