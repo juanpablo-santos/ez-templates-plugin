@@ -1,65 +1,38 @@
 package com.joelj.jenkins.eztemplates;
 
-import com.google.common.base.Throwables;
+import java.io.IOException;
+
+import com.joelj.jenkins.eztemplates.utils.PropertyListener;
 import com.joelj.jenkins.eztemplates.utils.TemplateUtils;
 
 import hudson.Extension;
-import hudson.model.Item;
 import hudson.model.Job;
-import hudson.model.listeners.ItemListener;
+
 
 /**
  * React to changes being made on template projects
  */
 @Extension
-public class TemplateProjectListener extends ItemListener {
+public class TemplateProjectListener extends PropertyListener<TemplateProperty> {
 
     @Override
-    public void onUpdated(Item item) {
-        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
-        if (property != null) {
-            try {
-                TemplateUtils.handleTemplateSaved((Job) item, property);
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
-        }
+    public void onUpdatedProperty(Job item, TemplateProperty property) throws IOException {
+        TemplateUtils.handleTemplateSaved(item, property);
     }
 
     @Override
-    public void onDeleted(Item item) {
-        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
-        if (property != null) {
-            try {
-                TemplateUtils.handleTemplateDeleted((Job) item, property);
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
-        }
+    public void onDeletedProperty(Job item, TemplateProperty property) throws IOException {
+        TemplateUtils.handleTemplateDeleted(item, property);
     }
 
     @Override
-    public void onLocationChanged(Item item, String oldFullName, String newFullName) {
-        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
-        if (property != null) {
-            try {
-                TemplateUtils.handleTemplateRename((Job) item, property, oldFullName, newFullName);
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
-        }
+    public void onLocationChangedProperty(Job item, String oldFullName, String newFullName, TemplateProperty property) throws IOException {
+        TemplateUtils.handleTemplateRename(item, property, oldFullName, newFullName);
     }
 
     @Override
-    public void onCopied(Item src, Item item) {
-        TemplateProperty property = TemplateUtils.getTemplateProperty(item);
-        if (property != null) {
-            try {
-                TemplateUtils.handleTemplateCopied((Job) item, (Job) src);
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
-        }
+    public void onCopiedProperty(Job src, Job item, TemplateProperty property) throws IOException {
+        TemplateUtils.handleTemplateCopied(item, src);
     }
 
 }

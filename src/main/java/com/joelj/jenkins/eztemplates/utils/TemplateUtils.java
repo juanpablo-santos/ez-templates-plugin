@@ -132,26 +132,8 @@ public class TemplateUtils {
         return implementationProject;
     }
 
-    /**
-     * @param item A changed project
-     * @return null if this is not a template implementation project
-     */
-    public static TemplateImplementationProperty getTemplateImplementationProperty(Item item) {
-        if (item instanceof Job) {
-            return (TemplateImplementationProperty) ((Job) item).getProperty(TemplateImplementationProperty.class);
-        }
-        return null;
-    }
-
-    /**
-     * @param item A changed project
-     * @return null if this is not a template project
-     */
-    public static TemplateProperty getTemplateProperty(Item item) {
-        if (item instanceof Job) {
-            return (TemplateProperty) ((Job) item).getProperty(TemplateProperty.class);
-        }
-        return null;
+    private static TemplateImplementationProperty getTemplateImplementationProperty(Item item) {
+        return PropertyListener.getProperty(item, TemplateImplementationProperty.class);
     }
 
 }

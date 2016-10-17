@@ -1,18 +1,24 @@
 package com.joelj.jenkins.eztemplates.exclusion;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.joelj.jenkins.eztemplates.Equaliser;
 import hudson.model.ChoiceParameterDefinition;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterDefinition;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import junitparams.naming.TestCaseName;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@RunWith(JUnitParamsRunner.class)
 public class JobParametersExclusionTest {
 
     private List<ParameterDefinition> template;
@@ -23,7 +29,7 @@ public class JobParametersExclusionTest {
     }
 
     private static ChoiceParameterDefinition choice(String name, String choices, String desc) {
-        return Equaliser.proxy(ChoiceParameterDefinition.class, name, choices, desc);
+        return Equaliser.proxy(ChoiceParameterDefinition.class, name, Joiner.on(",").join(choices.split("(,|)")), desc);
     }
 
     private static List<ParameterDefinition> params(ParameterDefinition... defs) {
@@ -86,6 +92,24 @@ public class JobParametersExclusionTest {
         ParametersDefinitionProperty merged = JobParametersExclusion.merge(child, template);
         // Then:
         assertThat(merged.getParameterDefinitions(), is(equalTo(params(string("alpha", "alpha-default", "YYYYYYYY")))));
+    }
+
+    @Test
+    @TestCaseName("[{index}] {method}_{3}: ({0},{1}) -> {2}")
+    @Parameters({
+            "ABC, ABC, ABC, no_change",
+            "ABCD, ABC, ABCD, template_additions_are_added",
+            "AB, ABC, AB, template_removals_are_ignored"
+    })
+    public void choice_param(String templateC, String childC, String resultC, String comment) {
+        // Given:
+        template = params(choice("alpha", templateC, "alpha-description"));
+        child = params(choice("alpha", childC, "alpha-description"));
+        // When:
+        ParametersDefinitionProperty merged = JobParametersExclusion.merge(child, template);
+        // Then:
+        List<ParameterDefinition> result = params(choice("alpha", resultC, "alpha-description"));
+        assertThat(merged.getParameterDefinitions(), is(equalTo(result)));
     }
 
 }
