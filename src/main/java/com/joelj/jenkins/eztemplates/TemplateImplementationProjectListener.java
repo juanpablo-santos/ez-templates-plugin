@@ -14,6 +14,10 @@ import java.io.IOException;
 @Extension
 public class TemplateImplementationProjectListener extends PropertyListener<TemplateImplementationProperty> {
 
+    public TemplateImplementationProjectListener() {
+        super(TemplateImplementationProperty.class);
+    }
+
     @Override
     public void onUpdatedProperty(Job item, TemplateImplementationProperty property) throws IOException {
         TemplateUtils.handleTemplateImplementationSaved((AbstractProject) item, property);

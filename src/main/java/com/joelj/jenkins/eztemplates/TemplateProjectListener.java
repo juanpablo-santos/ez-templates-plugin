@@ -14,6 +14,10 @@ import java.io.IOException;
 @Extension
 public class TemplateProjectListener extends PropertyListener<TemplateProperty> {
 
+    public TemplateProjectListener() {
+        super(TemplateProperty.class);
+    }
+
     @Override
     public void onUpdatedProperty(Job item, TemplateProperty property) throws IOException {
         TemplateUtils.handleTemplateSaved((AbstractProject) item, property);
