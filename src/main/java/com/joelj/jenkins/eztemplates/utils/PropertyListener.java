@@ -1,7 +1,9 @@
 package com.joelj.jenkins.eztemplates.utils;
 
+import java.lang.reflect.ParameterizedType;
+
 import com.google.common.base.Throwables;
-import com.google.inject.TypeLiteral;
+
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -15,16 +17,19 @@ public abstract class PropertyListener<J extends JobProperty<?>> extends ItemLis
 
     private final Class<J> propertyType;
 
+    boolean isPropertyOfTypeJ( final J property ) {
+        return property != null && propertyType.isAssignableFrom( property.getClass() );
+    }
+
     @SuppressWarnings("unchecked")
     public PropertyListener() {
-        propertyType = (Class<J>) new TypeLiteral<J>() {
-        }.getRawType(); // TODO Prefer TypeToken not available in guava-11
+        propertyType = (Class<J>)((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     @Override
     public final void onCreated(Item item) {
         J property = getProperty(item, propertyType);
-        if (property != null) {
+        if ( isPropertyOfTypeJ( property ) ) {
             try {
                 onCreatedProperty((Job) item, property);
             } catch (Exception e) {
@@ -42,7 +47,7 @@ public abstract class PropertyListener<J extends JobProperty<?>> extends ItemLis
     @Override
     public final void onCopied(Item src, Item item) {
         J property = getProperty(item, propertyType);
-        if (property != null) {
+        if ( isPropertyOfTypeJ( property ) ) {
             try {
                 onCopiedProperty((Job) src, (Job) item, property);
             } catch (Exception e) {
@@ -60,7 +65,7 @@ public abstract class PropertyListener<J extends JobProperty<?>> extends ItemLis
     @Override
     public final void onDeleted(Item item) {
         J property = getProperty(item, propertyType);
-        if (property != null) {
+        if ( isPropertyOfTypeJ( property ) ) {
             try {
                 onDeletedProperty((Job) item, property);
             } catch (Exception e) {
@@ -78,7 +83,7 @@ public abstract class PropertyListener<J extends JobProperty<?>> extends ItemLis
     @Override
     public final void onRenamed(Item item, String oldName, String newName) {
         J property = getProperty(item, propertyType);
-        if (property != null) {
+        if ( isPropertyOfTypeJ( property ) ) {
             try {
                 onRenamedProperty((Job) item, oldName, newName, property);
             } catch (Exception e) {
@@ -97,7 +102,7 @@ public abstract class PropertyListener<J extends JobProperty<?>> extends ItemLis
     @Override
     public final void onLocationChanged(Item item, String oldFullName, String newFullName) {
         J property = getProperty(item, propertyType);
-        if (property != null) {
+        if ( isPropertyOfTypeJ( property ) ) {
             try {
                 onLocationChangedProperty((Job) item, oldFullName, newFullName, property);
             } catch (Exception e) {
@@ -115,7 +120,7 @@ public abstract class PropertyListener<J extends JobProperty<?>> extends ItemLis
     @Override
     public final void onUpdated(Item item) {
         J property = getProperty(item, propertyType);
-        if (property != null) {
+        if ( isPropertyOfTypeJ( property ) ) {
             try {
                 onUpdatedProperty((Job) item, property);
             } catch (Exception e) {
