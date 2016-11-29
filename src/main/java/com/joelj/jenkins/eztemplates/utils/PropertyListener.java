@@ -3,7 +3,6 @@ package com.joelj.jenkins.eztemplates.utils;
 import java.lang.reflect.ParameterizedType;
 
 import com.google.common.base.Throwables;
-
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -13,7 +12,7 @@ import hudson.model.listeners.ItemListener;
 /**
  * Listens to changes only on {@link Job}s with a given {@link hudson.model.JobProperty}.
  */
-public abstract class PropertyListener<J extends JobProperty<?>> extends ItemListener {
+public abstract class PropertyListener<J extends JobProperty> extends ItemListener {
 
     private final Class<J> propertyType;
 
@@ -22,8 +21,8 @@ public abstract class PropertyListener<J extends JobProperty<?>> extends ItemLis
     }
 
     @SuppressWarnings("unchecked")
-    public PropertyListener() {
-        propertyType = (Class<J>)((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    public PropertyListener(Class<J> propertyType) {
+        this.propertyType = propertyType;        // TODO Prefer TypeToken not available in guava-11
     }
 
     @Override

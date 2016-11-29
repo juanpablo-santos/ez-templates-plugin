@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>ez-templates</artifactId>
-  <version>1.2.4-SNAPSHOT</version>
+  <version>1.2.6-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/EZ+Templates+Plugin</url>
 
